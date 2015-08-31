@@ -2,7 +2,18 @@
 
 这是一个简易的ORM工具，满足了对单表操作增删改查等操作。
 
-
+    @interface Member : FMDataTable
+    
+    @property (nonatomic, strong) NSString *firstName;
+    @property (nonatomic, strong) NSString *lastName;
+    @property (nonatomic, strong) NSString *avatar;
+    
+    @property (nonatomic, strong, readonly) NSString *fullName;
+    
+    + (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSString *)avatar;
+    
+    @end
+    
     Member * obj1 = [Member createInstance:@"Jack" :@"Liu" :@"http://www.baidu.com"];
     Member * obj2 = [Member createInstance:@"Lucy" :@"Wang" :@"http://www.baidu.com"];
     Member * obj3 = [Member createInstance:@"Tom" :@"Zhang" :@"http://www.baidu.com"];
@@ -43,3 +54,8 @@
 
     //清除所有数据
     [Member clear];
+
+# Installation
+
+pod 'FMDBDataTable', '~> 0.1'
+
