@@ -7,6 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FMDataTable.h"
+
+@interface Member : FMDataTable
+
+@property (nonatomic, strong) NSString *firstName;
+@property (nonatomic, strong) NSString *lastName;
+@property (nonatomic, strong) NSString *avatar;
+
+@property (nonatomic, strong, readonly) NSString *fullName;
+
++ (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSString *)avatar;
+
+@end
 
 @interface ViewController : UIViewController
 
