@@ -15,12 +15,6 @@
 
 @property (nonatomic, strong) NSMutableDictionary * map;
 @property (nonatomic, strong) NSString * def;
-@property (nonatomic, strong) NSMutableDictionary * schems;
-@property (nonatomic, strong) NSMutableArray * ready;
-/**
- * @brief 缓存SQL脚本
- */
-@property (nonatomic, strong) NSMutableDictionary * statements;
 
 @end
 
@@ -30,11 +24,9 @@
 {
     self = [super init];
     if (self) {
-        self.map = [NSMutableDictionary new];
-        self.def = [NSString stringWithFormat:@"%@/%@.db", CACHE_PATH, IDENTIFIER];
-        self.schems = [NSMutableDictionary new];
-        self.ready = [NSMutableArray new];
-        self.statements = [NSMutableDictionary new];
+        _map   = [NSMutableDictionary new];
+        _cache = [NSMutableDictionary new];
+        _def   = [NSString stringWithFormat:@"%@/%@.db", CACHE_PATH, IDENTIFIER];
     }
     return self;
 }
@@ -49,30 +41,59 @@
     return __staticObject;
 }
 
-- (void)bindModelWithClass:(Class)classType dbName:(NSString *)dbName
+
+#pragma mark
+#pragma mark 缓存
+
+- (NSDictionary *)featchCache:(Class)ctype
 {
-    [self bindModelWithClass:classType dbName:dbName dbPath:CACHE_PATH];
+    NSDictionary * item = [self.cache objectForKey:NSStringFromClass(ctype)];
+    if (item == nil) {
+        FMDataTableSchema *s1 = [FMDataTableSchema create:ctype];
+        FMDataTableStatement *s2 = [[FMDataTableStatement alloc] initWithDataTableSchema:s1];
+        item = @{ @"s1":s1, @"s2":s2};
+        [self.cache setObject:item forKey:NSStringFromClass(ctype)];
+    }
+    return item;
 }
 
-- (void)bindModelWithClass:(Class)classType dbName:(NSString *)dbName dbPath:(NSString *)dbPath
+- (FMDataTableSchema *)featchSchema:(Class)ctype
 {
-    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(classType)];
+    return [[self featchCache:ctype] objectForKey:@"s1"];
 }
 
-- (NSString *)dbPathWithClass:(Class)classType
+- (FMDataTableStatement *)featchStatement:(Class)ctype
 {
-    NSString * path = [self.map objectForKey:NSStringFromClass(classType)];
+    return [[self featchCache:ctype] objectForKey:@"s2"];
+}
+
+#pragma mark
+#pragma mark 表与库的关系映射
+
+- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName
+{
+    [self bindModelWithClass:ctype dbName:dbName dbPath:CACHE_PATH];
+}
+
+- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName dbPath:(NSString *)dbPath
+{
+    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(ctype)];
+}
+
+- (NSString *)featchPath:(Class)ctype
+{
+    NSString * path = [self.map objectForKey:NSStringFromClass(ctype)];
     return path ? path : self.def;
 }
 
-- (FMDataTableSchema *)dbSchemaWithClass:(Class)classType
+- (FMDatabase *)featchDatabase:(Class)type
 {
-    NSString * cname = NSStringFromClass(classType);
-    FMDataTableSchema *dts = [self.schems objectForKey:cname];
-    if (dts == nil) {
-        dts = [FMDataTableSchema create:classType];
-    }
-    return dts;
+    return [FMDatabase databaseWithPath:[self featchPath:type]];
+}
+
+- (FMDatabaseQueue *)featchDatabaseQueue:(Class)type
+{
+    return [FMDatabaseQueue databaseQueueWithPath:[self featchPath:type]];
 }
 
 - (NSString *)getCrateSql:(FMDataTableSchema *)dts
@@ -104,112 +125,45 @@
     return text;
 }
 
-- (void)checkModelIsReady:(Class)classType
+- (void)checkModelIsReady:(Class)ctype
 {
-    NSString * cname = NSStringFromClass(classType);
-    if (![self.ready containsObject:cname]) {
-        //获取表结构
-        NSString   *ts = [NSString stringWithFormat:@"select * from sqlite_master where type='table' and name='%@'", cname];
-        FMDatabase *db = [[FMDatabase alloc] initWithPath:[self dbPathWithClass:classType]];
-        if (self.logEnabled) {
-            NSLog(@"Path:%@", db.databasePath);
-        }
-        [db open];
-        FMResultSet *set = [db executeQuery:ts];
-        FMDataTableSchema *dts = [self dbSchemaWithClass:classType];
-        //如果为YES，说明数据库已经有表了，那么我们需要判断是否要对字段更新
-        if ([set next]) {
-//            NSDictionary *dbts = [self resolveDatabaseTableSchema:[set stringForColumn:@"sql"]];
-            NSString *text = [self getAlterTableSql:dts dbts:[set stringForColumn:@"sql"]];
-            @try {
-                if (text.length > 0) {
-                    [db executeStatements:text];
-                    if (self.logEnabled) {
-                        NSLog(@"SQL:%@", text);
-                    }
-                }
-            }
-            @catch (NSException *exception) {
+    NSString *cname = NSStringFromClass(ctype);
+    //获取表结构
+    NSString   *ts = [NSString stringWithFormat:@"select * from sqlite_master where type='table' and name='%@'", cname];
+    FMDatabase *db = [self featchDatabase:ctype];
+    if (self.logEnabled) {
+        NSLog(@"Path:%@", db.databasePath);
+    }
+    [db open];
+    FMResultSet *set = [db executeQuery:ts];
+    FMDataTableSchema *dts = [self featchSchema:ctype];
+    //如果为YES，说明数据库已经有表了，那么我们需要判断是否要对字段更新
+    if ([set next]) {
+        NSString *text = [self getAlterTableSql:dts dbts:[set stringForColumn:@"sql"]];
+        @try {
+            if (text.length > 0) {
+                [db executeStatements:text];
                 if (self.logEnabled) {
-                    NSLog(@"数据更新错误:更新字段冲突.");
+                    NSLog(@"SQL:%@", text);
                 }
             }
-            @finally {
-                [db close];
-            }
-        } else {
-            NSString * text = [self getCrateSql:dts];
-            [db executeUpdate:text];
+        }
+        @catch (NSException *exception) {
             if (self.logEnabled) {
-                NSLog(@"SQL:%@", text);
+                NSLog(@"数据更新错误:更新字段冲突.");
             }
+        }
+        @finally {
             [db close];
         }
-        
-        if (![self.ready containsObject:cname]) {
-            [self.ready addObject:cname];
+    } else {
+        NSString * text = [self getCrateSql:dts];
+        [db executeUpdate:text];
+        if (self.logEnabled) {
+            NSLog(@"SQL:%@", text);
         }
+        [db close];
     }
-}
-
-
-//- (NSDictionary *)resolveDatabaseTableSchema:(NSString *)sql
-//{
-//    NSInteger s = [sql rangeOfString:@"("].location;
-//    NSInteger e = [sql length] - s - 1;
-//    NSString *str = [sql substringWithRange:NSMakeRange(s+1, e)];
-//
-//    NSArray *items = [str componentsSeparatedByString:@","];
-//    NSMutableDictionary * results = [NSMutableDictionary new];
-//    for (int i = 0; i < items.count; i++) {
-//        NSArray * fileds = [[items objectAtIndex:i] componentsSeparatedByString:@" "];
-//        NSString *key = [fileds[0] stringByReplacingOccurrencesOfString:@"[" withString:@""];
-//        key = [key stringByReplacingOccurrencesOfString:@"]" withString:@""];
-//        
-//        [results setObject:@{ @"Field": fileds[0], @"DbType": fileds[1]} forKey:key];
-//    }
-//    return results;
-//}
-
-- (NSString *)getSelectStatements:(Class)classType
-{
-    NSString * key = [NSString stringWithFormat:@"__select.%@", NSStringFromClass(classType)];
-    NSString * sql = [self.statements objectForKey:key];
-    if (sql == nil) {
-        FMDataTableSchema *dts = [self dbSchemaWithClass:classType];
-        NSMutableString *ms = [[NSMutableString alloc] initWithString:@"select "];
-        for (NSDictionary *entry in dts.fields) {
-            [ms appendFormat:@"[%@],", entry[DTS_F_NAME]];
-        }
-        [ms deleteCharactersInRange:NSMakeRange(ms.length - 1, 1)];
-        [ms appendFormat:@" from [%@]", dts.tableName];
-        sql = ms;
-        [self.statements setObject:sql forKey:key];
-    }
-    return sql;
-}
-
-- (NSString *)getReplaceStatements:(Class)classType
-{
-    NSString *key = [NSString stringWithFormat:@"__replace.%@", NSStringFromClass(classType)];
-    NSString *sql = [self.statements objectForKey:key];
-    if (sql == nil) {
-        FMDataTableSchema *dts = [self dbSchemaWithClass:classType];
-        NSMutableString *ms = [NSMutableString stringWithFormat:@"replace into [%@] (", dts.tableName];
-        for (NSDictionary *entry in dts.fields) {
-            [ms appendFormat:@"[%@],", [entry objectForKey:DTS_F_NAME]];
-        }
-        [ms deleteCharactersInRange:NSMakeRange(ms.length - 1, 1)];
-        [ms appendString:@") values ("];
-        for (int i = 0; i < dts.fields.count; i++) {
-            [ms appendString:@"?,"];
-        }
-        [ms deleteCharactersInRange:NSMakeRange(ms.length - 1, 1)];
-        [ms appendString:@")"];
-        sql = ms;
-        [self.statements setObject:sql forKey:key];
-    }
-    return sql;
 }
 
 @end

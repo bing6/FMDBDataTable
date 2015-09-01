@@ -17,7 +17,7 @@
 @interface FMDataTableSchema : NSObject
 
 
-+ (instancetype)create:(Class)classType;
++ (instancetype)create:(Class)ctype;
 
 - (instancetype)initWithClassName:(NSString *)className fields:(NSArray *)fields;
 
@@ -34,4 +34,34 @@
  */
 @property (nonatomic, strong, readonly) NSArray  * fields;
 
+/**
+ * @brief 根据字段列表的索引值获取字段名称
+ */
+- (NSString *)fetchFiledNameWithIndex:(NSInteger)index;
+/**
+ * @brief 根据字段列表的索引值获取字段类型
+ */
+- (NSString *)fetchFiledTypeWithIndex:(NSInteger)index;
+
 @end
+
+
+//@interface FMDataTableSchemaTable : NSObject
+//
+///**
+// * @brief 创建一个DataTableSchemaTable对象
+// * @param 模型类型
+// */
+//+ (instancetype)createInstance:(Class)ctype;
+//
+///**
+// * @brief 构造函数
+// * @param className 类名
+// * @param talbeName 表名
+// * @param fieldList FMDataTableSchemaField集合
+// */
+//- (instancetype)initWith:(NSString *)className tableName:(NSString *)tableName fieldList:(NSArray *)flist;
+//
+//
+//@end
+

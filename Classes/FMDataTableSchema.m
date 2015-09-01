@@ -7,53 +7,47 @@
 //
 
 #import "FMDataTableSchema.h"
-#import <objc/runtime.h>
+#import "NSObject+runtime.h"
+
+#define DB_TYPE_TEXT   @"text"
+#define DB_TYPE_NUMBER @"integer"
+#define DB_TYPE_BLOB   @"blob"
+#define DB_TYPE_DATE   @"date"
+
+NSDictionary * newField(NSString *name, NSString *type)
+{
+    static NSDictionary *__map;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __map = @{ @"T@\"NSString\"":DB_TYPE_TEXT,
+                   @"T@\"NSNumber\"":DB_TYPE_NUMBER,
+                   @"T@\"NSDate\"":DB_TYPE_DATE,
+                   @"T@\"NSData\"":DB_TYPE_NUMBER,
+                   @"Ti":DB_TYPE_NUMBER,
+                   @"T^i":DB_TYPE_NUMBER,
+                   @"Tf":DB_TYPE_NUMBER,
+                   @"Tq":DB_TYPE_NUMBER,
+                   @"Td":DB_TYPE_NUMBER };
+    });
+    NSString *dbType = [__map objectForKey:type];
+    if (dbType) {
+        return @{ DTS_F_OBJ_NAME:name, DTS_F_NAME:name, DTS_F_TYPE:dbType };
+    }
+    return nil;
+}
 
 @implementation FMDataTableSchema
 
-+ (instancetype)create:(Class)classType
++ (instancetype)create:(Class)ctype
 {
-    //获得类属性的数量
-    u_int count;
-    objc_property_t *allProperties = class_copyPropertyList(classType, &count);
-    
-    NSMutableArray * fs = [NSMutableArray new];
-    
-    for (int i = 0; i < count; i++) {
-        NSString * attr = [NSString stringWithFormat:@"%s", property_getAttributes(allProperties[i])];
-        //判断是否为只读属性,只读类型不需要管理
-        if ([[attr componentsSeparatedByString:@","] indexOfObject:@"R"] != NSIntegerMax) {
-            continue;
+    NSMutableArray * fields = [NSMutableArray new];
+    [NSObject enumeratePropertiesWithClassType:ctype usingBlick:^(BOOL read, NSString *name, NSString *type, NSArray *attrs) {
+        NSDictionary * item = nil;
+        if (!read && (item = newField(name, type))) {
+            [fields addObject:item];
         }
-        //获取属性名与属性类型
-        NSString *name = [NSString stringWithUTF8String:property_getName(allProperties[i])];
-        NSRange   r    = [attr rangeOfString:@","];
-        NSString *oct  = [attr substringToIndex:r.location];
-        NSString *dbt  = nil;
-        if ([oct isEqualToString:@"T@\"NSString\""]) {
-            dbt = @"TEXT";
-        } else if ([oct isEqualToString:@"T@\"NSNumber\""]) {
-            dbt = @"INTEGER";
-        } else if ([oct isEqualToString:@"T@\"NSDate\""]) {
-            dbt = @"DATE";
-        }  else if ([oct isEqualToString:@"T@\"NSData\""]) {
-            dbt = @"BLOB";
-        } else if ([oct isEqualToString:@"Ti"] || [oct isEqualToString:@"T^i"]){
-            dbt = @"INTEGER";
-        } else if ([oct isEqualToString:@"Tf"]) {
-            dbt = @"INTEGER";
-        } else if ([oct isEqualToString:@"Tq"]) {
-            dbt = @"INTEGER";
-        } else if ([oct isEqualToString:@"Td"]) {
-            dbt = @"INTEGER";
-        } else {
-            continue;
-        }
-        [fs addObject:@{ DTS_F_OBJ_NAME:name, DTS_F_NAME:name, DTS_F_TYPE:dbt }];
-    }
-    free(allProperties);
-    
-    return [[FMDataTableSchema alloc] initWithClassName:NSStringFromClass(classType) fields:fs];
+    }];
+    return [[FMDataTableSchema alloc] initWithClassName:NSStringFromClass(ctype) fields:fields];
 }
 
 - (instancetype)initWithClassName:(NSString *)className fields:(NSArray *)fields
@@ -63,15 +57,25 @@
         
         NSMutableArray * tmp = [NSMutableArray new];
         [tmp addObject:@{ DTS_F_OBJ_NAME:@"pid", DTS_F_NAME:@"pid", DTS_F_TYPE:@"text" }];
+        [tmp addObjectsFromArray:fields];
         [tmp addObject:@{ DTS_F_OBJ_NAME:@"createdAt", DTS_F_NAME:@"createdAt", DTS_F_TYPE:@"integer" }];
         [tmp addObject:@{ DTS_F_OBJ_NAME:@"updatedAt", DTS_F_NAME:@"updatedAt", DTS_F_TYPE:@"integer" }];
-        [tmp addObjectsFromArray:fields];
         
         _className = className;
         _tableName = className;
         _fields    = [NSArray arrayWithArray:tmp];
     }
     return self;
+}
+
+- (NSString *)fetchFiledNameWithIndex:(NSInteger)index
+{
+    return [[_fields objectAtIndex:index] objectForKey:DTS_F_NAME];
+}
+
+- (NSString *)fetchFiledTypeWithIndex:(NSInteger)index
+{
+    return [[_fields objectAtIndex:index] objectForKey:DTS_F_TYPE];
 }
 
 @end

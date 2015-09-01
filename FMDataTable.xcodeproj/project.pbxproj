@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37014FA81B95411A0003687B /* NSObject+runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 37014FA71B95411A0003687B /* NSObject+runtime.m */; };
+		37014FB21B9551340003687B /* FMDataTableStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = 37014FB11B9551340003687B /* FMDataTableStatement.m */; };
+		37014FBB1B95796E0003687B /* FMDataTableQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 37014FBA1B95796E0003687B /* FMDataTableQuery.m */; };
+		37014FBE1B957D180003687B /* FMDataTable+Query.m in Sources */ = {isa = PBXBuildFile; fileRef = 37014FBD1B957D180003687B /* FMDataTable+Query.m */; };
 		371FF0131B93E0DD001D59BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0121B93E0DD001D59BB /* main.m */; };
 		371FF0161B93E0DD001D59BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0151B93E0DD001D59BB /* AppDelegate.m */; };
 		371FF0191B93E0DD001D59BB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0181B93E0DD001D59BB /* ViewController.m */; };
@@ -32,6 +36,14 @@
 
 /* Begin PBXFileReference section */
 		18C4B0A18C8E5D8E6F294DDB /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		37014FA61B95411A0003687B /* NSObject+runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+runtime.h"; sourceTree = "<group>"; };
+		37014FA71B95411A0003687B /* NSObject+runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+runtime.m"; sourceTree = "<group>"; };
+		37014FB01B9551340003687B /* FMDataTableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDataTableStatement.h; sourceTree = "<group>"; };
+		37014FB11B9551340003687B /* FMDataTableStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDataTableStatement.m; sourceTree = "<group>"; };
+		37014FB91B95796E0003687B /* FMDataTableQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDataTableQuery.h; sourceTree = "<group>"; };
+		37014FBA1B95796E0003687B /* FMDataTableQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDataTableQuery.m; sourceTree = "<group>"; };
+		37014FBC1B957D180003687B /* FMDataTable+Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FMDataTable+Query.h"; sourceTree = "<group>"; };
+		37014FBD1B957D180003687B /* FMDataTable+Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FMDataTable+Query.m"; sourceTree = "<group>"; };
 		371FF00D1B93E0DD001D59BB /* FMDataTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FMDataTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		371FF0111B93E0DD001D59BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		371FF0121B93E0DD001D59BB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -89,6 +101,15 @@
 				18C4B0A18C8E5D8E6F294DDB /* libPods.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37014FA51B9540ED0003687B /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				37014FA61B95411A0003687B /* NSObject+runtime.h */,
+				37014FA71B95411A0003687B /* NSObject+runtime.m */,
+			);
+			name = Category;
 			sourceTree = "<group>";
 		};
 		371FF0041B93E0DD001D59BB = {
@@ -156,12 +177,19 @@
 		371FF0491B93F3C4001D59BB /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				37014FA51B9540ED0003687B /* Category */,
 				371FF04A1B93F3C4001D59BB /* FMDataTable.h */,
 				371FF04B1B93F3C4001D59BB /* FMDataTable.m */,
 				371FF04C1B93F3C4001D59BB /* FMDataTableManager.h */,
 				371FF04D1B93F3C4001D59BB /* FMDataTableManager.m */,
 				371FF04E1B93F3C4001D59BB /* FMDataTableSchema.h */,
 				371FF04F1B93F3C4001D59BB /* FMDataTableSchema.m */,
+				37014FB01B9551340003687B /* FMDataTableStatement.h */,
+				37014FB11B9551340003687B /* FMDataTableStatement.m */,
+				37014FB91B95796E0003687B /* FMDataTableQuery.h */,
+				37014FBA1B95796E0003687B /* FMDataTableQuery.m */,
+				37014FBC1B957D180003687B /* FMDataTable+Query.h */,
+				37014FBD1B957D180003687B /* FMDataTable+Query.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -302,10 +330,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				371FF0521B93F3C4001D59BB /* FMDataTableSchema.m in Sources */,
+				37014FBB1B95796E0003687B /* FMDataTableQuery.m in Sources */,
+				37014FB21B9551340003687B /* FMDataTableStatement.m in Sources */,
 				371FF0191B93E0DD001D59BB /* ViewController.m in Sources */,
 				371FF0501B93F3C4001D59BB /* FMDataTable.m in Sources */,
 				371FF0161B93E0DD001D59BB /* AppDelegate.m in Sources */,
+				37014FA81B95411A0003687B /* NSObject+runtime.m in Sources */,
 				371FF0511B93F3C4001D59BB /* FMDataTableManager.m in Sources */,
+				37014FBE1B957D180003687B /* FMDataTable+Query.m in Sources */,
 				371FF0131B93E0DD001D59BB /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

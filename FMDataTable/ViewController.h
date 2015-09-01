@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *lastName;
 @property (nonatomic, strong) NSString *avatar;
+@property (nonatomic, assign) NSInteger sss;
 
 @property (nonatomic, strong, readonly) NSString *fullName;
 

@@ -7,21 +7,27 @@
 //
 
 #import "FMDataTable.h"
+#import "NSObject+runtime.h"
 
 @implementation FMDataTable
+
++ (void)initialize
+{
+    //initialize会调用二次,第一次基类调用,第二次子类调用,那么我们需要在子类
+    //调用时检查表结构是否建立
+    if ([FMDataTable class] != [self class]) {
+        [DTM_SHARE checkModelIsReady:[self class]];
+    }
+}
 
 - (NSString *)GUID
 {
     CFUUIDRef   uuid_ref        = CFUUIDCreate(NULL);
     CFStringRef uuid_string_ref = CFUUIDCreateString(NULL, uuid_ref);
-    
     CFRelease(uuid_ref);
-    
     NSString *uuid = [NSString stringWithString:(__bridge NSString*)uuid_string_ref];
-    
     CFRelease(uuid_string_ref);
-    
-    return uuid;
+    return [uuid stringByReplacingOccurrencesOfString:@"-" withString:@""];
 }
 
 - (instancetype)init
@@ -37,16 +43,39 @@
 {
     self = [super init];
     if (self) {
-        FMDataTableSchema *dts = [DTM_SHARE dbSchemaWithClass:[self class]];
+        FMDataTableSchema *dts = [DTM_SHARE featchSchema:[self class]];
         for (NSDictionary *entry in dts.fields) {
             NSString * name = entry[DTS_F_NAME];
             NSObject * value = [data objectForKey:name];
-            if (value) {
+            if (value && ![value isEqual:[NSNull null]]) {
                 [self setValue:value forKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
             }
         }
     }
     return self;
+}
+
+- (instancetype)initWithPid:(NSString *)pid
+{
+    self = [super init];
+    if (self) {
+        self.pid = pid;
+    }
+    return self;
+}
+
+- (instancetype)initWithIntPid:(NSInteger)pid
+{
+    self = [super init];
+    if (self) {
+        self.pid = [NSString stringWithFormat:@"%lld", (long long)pid];
+    }
+    return self;
+}
+
+- (NSInteger)pid_i
+{
+    return [self.pid integerValue];
 }
 
 + (NSArray *)order:(NSString *)order
@@ -71,12 +100,8 @@
 
 + (NSArray *)where:(NSString *)where args:(NSArray *)args order:(NSString *)order limit:(NSNumber *)limit offset:(NSNumber *)offset
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-    
-    NSString *from = [DTM_SHARE getSelectStatements:[self class]];
-    NSMutableString * ms = [NSMutableString stringWithString:from];
-    
-    [ms appendString:@" "];
+    FMDataTableStatement * statement = [DTM_SHARE featchStatement:[self class]];
+    NSMutableString * ms = [NSMutableString stringWithString:statement.s_select];
     
     if (where) {
         if ([[where lowercaseString] hasPrefix:@"where"] ) {
@@ -103,7 +128,7 @@
     }
     
     NSMutableArray *result = [NSMutableArray new];
-    FMDatabase * db = [FMDatabase databaseWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
+    FMDatabase * db = [DTM_SHARE featchDatabase:[self class]];
     
     [db open];
     FMResultSet *set = [db executeQuery:ms withArgumentsInArray:args];
@@ -127,8 +152,6 @@
 
 + (NSArray *)executeQuery:(NSString *)query, ...
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-    
     NSMutableArray *result = [NSMutableArray new];
     
     va_list args;
@@ -136,7 +159,7 @@
     NSString *cmd = [[NSString alloc] initWithFormat:query arguments:args];
     va_end(args);
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
+    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
     [db open];
     FMResultSet *set = [db executeQuery:cmd];
     while ([set next]) {
@@ -151,14 +174,12 @@
 
 + (void)executeNonQuery:(NSString *)sql, ...
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-
     va_list args;
     va_start(args, sql);
     NSString *cmd = [[NSString alloc] initWithFormat:sql arguments:args];
     va_end(args);
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
+    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
     [db open];
     [db executeUpdate:cmd];
     [db close];
@@ -170,29 +191,27 @@
 
 - (void)save
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-    
     self.updatedAt = [NSNumber numberWithDouble:[NSDate date].timeIntervalSince1970];
     
     if (self.createdAt == nil) {
         self.createdAt = self.updatedAt;
     }
     
-    NSString * sql = [DTM_SHARE getReplaceStatements:[self class]];
-    
-    FMDatabase *db= [FMDatabase databaseWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
+    FMDataTableStatement * statement = [DTM_SHARE featchStatement:[self class]];
+
+    FMDatabase *db= [DTM_SHARE featchDatabase:[self class]];
     [db open];
-    [db executeUpdate:sql withArgumentsInArray:[self toValues]];
+    [db executeUpdate:statement.s_replace withArgumentsInArray:[self toValues]];
     [db close];
     
     if (DTM_SHARE.logEnabled) {
-        NSLog(@"SQL:%@", sql);
+        NSLog(@"SQL:%@", statement.s_replace);
     }
 }
 
 - (NSArray *)toValues
 {
-    FMDataTableSchema *dts = [DTM_SHARE dbSchemaWithClass:[self class]];
+    FMDataTableSchema *dts = [DTM_SHARE featchSchema:[self class]];
     NSMutableArray * ma = [NSMutableArray new];
     for (NSDictionary *entry in dts.fields) {
         id obj = [self valueForKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
@@ -207,15 +226,13 @@
 
 - (void)destroy
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-    
-    FMDatabase *db = [FMDatabase databaseWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
-    NSString *sql = [NSString stringWithFormat:@"delete from %@ where pid = '%@'", NSStringFromClass([self class]), self.pid];
+    FMDataTableStatement *statement = [DTM_SHARE featchStatement:[self class]];
+    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
     [db open];
-    [db executeUpdate:sql];
+    [db executeQuery:statement.s_delete withArgumentsInArray:@[ self.pid ]];
     [db close];
     if (DTM_SHARE.logEnabled) {
-        NSLog(@"SQL:%@", sql);
+        NSLog(@"SQL:%@", statement.s_delete);
     }
 }
 
@@ -226,24 +243,18 @@
 
 + (void)batchSave:(NSArray *)records complete:(void (^)(id, NSError *))complete
 {
-    [DTM_SHARE checkModelIsReady:[self class]];
-    
-    FMDatabaseQueue * queue = [[FMDatabaseQueue alloc] initWithPath:[DTM_SHARE dbPathWithClass:[self class]]];
-    
+    FMDatabaseQueue *queue = [DTM_SHARE featchDatabaseQueue:[self class]];
+    FMDataTableStatement *statement = [DTM_SHARE featchStatement:[self class]];
     [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try {
-            NSString * sql = [DTM_SHARE getReplaceStatements:[self class]];
             for (id entry in records) {
-                
                 [entry setUpdatedAt:@([NSDate date].timeIntervalSince1970)];
-                
                 if ([entry createdAt] == nil) {
                     [entry setCreatedAt:[entry updatedAt]];
                 }
-                
-                [db executeUpdate:sql withArgumentsInArray:[entry toValues]];
+                [db executeUpdate:statement.s_replace withArgumentsInArray:[entry toValues]];
                 if (DTM_SHARE.logEnabled) {
-                    NSLog(@"SQL:%@", sql);
+                    NSLog(@"SQL:%@", statement.s_replace);
                 }
             }
         }
@@ -258,17 +269,6 @@
         }
     }];
 }
-
-- (NSString *)description
-{
-    FMDataTableSchema *dts = [DTM_SHARE dbSchemaWithClass:[self class]];
-    NSMutableArray * tmp = [NSMutableArray new];
-    for (NSDictionary *entry in dts.fields) {
-        [tmp addObject:[NSString stringWithFormat:@"[%@]=%@", entry[DTS_F_OBJ_NAME], [self valueForKeyPath:entry[DTS_F_OBJ_NAME]]]];
-    }
-    return [NSString stringWithFormat:@"\r########################################\r%@\r########################################", [tmp componentsJoinedByString:@",\r"]];
-}
-
 
 + (id)findByPid:(id)pid
 {
@@ -294,6 +294,23 @@
     NSString *where = [NSString stringWithFormat:@"%@ like '%%%@%%'", f, v];
     NSArray *result = [self where:where args:nil];
     return result;
+}
+
+#pragma mark
+#pragma makr override base class
+
+- (NSString *)description
+{
+    NSMutableString * ms = [[NSMutableString alloc] init];
+    [ms appendString:@"\r########################################"];
+    [ms appendFormat:@"\r[pid]=%@", self.pid];
+    [NSObject enumeratePropertiesWithClassType:[self class] usingBlick:^(BOOL read, NSString *name, NSString *type, NSArray *attrs) {
+        [ms appendFormat:@"\r[%@]=%@", name, [self valueForKeyPath:name]];
+    }];
+    [ms appendFormat:@"\r[createdAt]=%@", self.createdAt];
+    [ms appendFormat:@"\r[updatedAt]=%@", self.updatedAt];
+    [ms appendString:@"\r########################################\r"];
+    return ms;
 }
 
 @end

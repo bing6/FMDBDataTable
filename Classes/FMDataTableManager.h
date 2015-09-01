@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <FMDB.h>
 #import "FMDataTableSchema.h"
+#import "FMDataTableStatement.h"
 
 #define DTM_SHARE [FMDataTableManager shared]
 
@@ -23,6 +24,20 @@
 
 
 /**
+ * @brief 缓存
+ */
+@property (nonatomic, strong, readonly) NSMutableDictionary *cache;
+
+/**
+ * @brief 获取当前模型的Schema
+ */
+- (FMDataTableSchema *)featchSchema:(Class)ctype;
+/**
+ * @brief 获取当前模型的标准SQL语句
+ */
+- (FMDataTableStatement *)featchStatement:(Class)ctype;
+
+/**
  * @brief 绑定模型与数据据库的存储关系,并不是所有模型都必须要调用这个绑定方法的，
  *        这个只是为了实现一些自定义存储位置而开发的。如果不自动建立绑定关系,
  *        数据会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
@@ -35,28 +50,24 @@
 - (void)bindModelWithClass:(Class)classType dbName:(NSString *)dbName;
 
 /**
- * @brief 获取模型存储路径
- *
- * @param classType 模型类型
+ * @brief 获取数据库存储路径
  */
-- (NSString *)dbPathWithClass:(Class)classType;
+- (NSString *)featchPath:(Class)ctype;
 
 /**
- * @brief 获取表结构
- * 
- * @param classType 模型类型
+ * @brief 获取一个FMDatabase对象
  */
-- (FMDataTableSchema *)dbSchemaWithClass:(Class)classType;
+- (FMDatabase *)featchDatabase:(Class)type;
+
+/**
+ * @brief 获取一个FMDatabaseQueue对象
+ */
+- (FMDatabaseQueue *)featchDatabaseQueue:(Class)type;
 
 /**
  * @brief 检查模型是否与物理数据库匹配完成
  */
-- (void)checkModelIsReady:(Class)classType;
+- (void)checkModelIsReady:(Class)ctype;
 
-/**
- * @brief 获取查询SQL
- */
-- (NSString *)getSelectStatements:(Class)classType;
-- (NSString *)getReplaceStatements:(Class)classType;
 
 @end

@@ -25,6 +25,18 @@
 @property (nonatomic, strong) NSNumber *updatedAt;
 
 /**
+ * @brief 自定义主键
+ */
+- (instancetype)initWithPid:(NSString *)pid;
+- (instancetype)initWithIntPid:(NSInteger)pid;
+
+/**
+ * @brief 返回一个INT类型的主键
+ */
+@property (nonatomic, assign, readonly) NSInteger pid_i;
+
+
+/**
  * @brief 将字典数据填充到对象中
  */
 - (instancetype)initWithDict:(NSDictionary *)data;
