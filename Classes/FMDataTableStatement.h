@@ -11,7 +11,7 @@
 
 @interface FMDataTableStatement : NSObject
 {
-    __weak FMDataTableSchema *_schema;
+    FMDataTableSchema *_schema;
 }
 
 - (instancetype)initWithDataTableSchema:(FMDataTableSchema *)schema;
