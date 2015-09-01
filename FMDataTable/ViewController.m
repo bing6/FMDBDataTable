@@ -81,16 +81,19 @@
 //    //清除所有数据
 //    [Member clear];
     
-    
-    //链式查询
-//    FMDataTableQuery *query = [Member query]
-//                                .dt_where(@"firstName", @"Lucy")
-//                                .dt_or(@"lastName", @"Zhang")
-//                                .dt_orderByDesc(@"createdAt")
-//                                .dt_limit(2,2);
-//    NSLog(@"%@", [query toList]);
+
+//    //链式查询
+//    FMDataTableQuery * query = [Member query];
 //    
-//    NSLog(@"%@", [[Member query].dt_where(@"firstName", @"Lucy") toList]);
+//    NSLog(@"%@", query.where(@"sss", @(4)).fetchFirst());
+//    
+//    NSArray *result = [Member query]
+//                        .where(@"sss", @(4))
+//                        .whereOr(@"lastName", @"Zhang")
+//                        .orderByDesc(@"createdAt")
+//                        .fetchArray();
+//    NSLog(@"%@", result);
+
 
 }
 

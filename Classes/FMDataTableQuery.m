@@ -31,7 +31,7 @@
     return self;
 }
 
-- (FMDataTableQuery *(^)(NSString *, id))dt_where
+- (FMDataTableQuery *(^)(NSString *, id))where
 {
     return ^(NSString *f, id v) {
         _myWhere = nil;
@@ -40,7 +40,16 @@
     };
 }
 
-- (FMDataTableQuery *(^)(NSString *, id))dt_and
+- (FMDataTableQuery *(^)(NSString *, id))whereNotEqual
+{
+    return ^(NSString *f, id v) {
+        _myWhere = nil;
+        _myWhere = [NSMutableString stringWithFormat:@"where %@<>'%@'", f, v];
+        return self;
+    };
+}
+
+- (FMDataTableQuery *(^)(NSString *, id))whereAnd
 {
     return ^(NSString *f, id v) {
         if (_myWhere == nil) {
@@ -52,7 +61,19 @@
     };
 }
 
-- (FMDataTableQuery *(^)(NSString *, id))dt_or
+- (FMDataTableQuery *(^)(NSString *, id))whereAndNotEqual
+{
+    return ^(NSString *f, id v) {
+        if (_myWhere == nil) {
+            _myWhere = [NSMutableString stringWithFormat:@"where %@<>'%@'", f, v];
+        } else {
+            [_myWhere appendFormat:@" and %@<>'%@'", f, v];
+        }
+        return self;
+    };
+}
+
+- (FMDataTableQuery *(^)(NSString *, id))whereOr
 {
     return ^(NSString *f, id v) {
         if (_myWhere == nil) {
@@ -64,7 +85,19 @@
     };
 }
 
-- (FMDataTableQuery *(^)(NSString *))dt_orderByAsc
+- (FMDataTableQuery *(^)(NSString *, id))whereOrNotEqual
+{
+    return ^(NSString *f, id v) {
+        if (_myWhere == nil) {
+            _myWhere = [NSMutableString stringWithFormat:@"where %@<>'%@'", f, v];
+        } else {
+            [_myWhere appendFormat:@" or %@<>'%@'", f, v];
+        }
+        return self;
+    };
+}
+
+- (FMDataTableQuery *(^)(NSString *))orderByAsc
 {
     return ^(NSString *f) {
         if (_myOrder == nil) {
@@ -76,7 +109,7 @@
     };
 }
 
-- (FMDataTableQuery *(^)(NSString *))dt_orderByDesc
+- (FMDataTableQuery *(^)(NSString *))orderByDesc
 {
     return ^(NSString *f) {
         if (_myOrder == nil) {
@@ -88,7 +121,7 @@
     };
 }
 
-- (FMDataTableQuery *(^)(NSInteger, NSInteger))dt_limit
+- (FMDataTableQuery *(^)(NSInteger, NSInteger))limit
 {
     return ^(NSInteger page, NSInteger size) {
         page = MAX(0, page -1);
@@ -98,6 +131,21 @@
         return self;
     };
 }
+
+- (NSArray *(^)())fetchArray
+{
+    return ^(void){
+        return [self toList];
+    };
+}
+
+- (id (^)())fetchFirst
+{
+    return ^(void){
+        return [self first];
+    };
+}
+
 
 - (NSArray *)toList
 {
@@ -116,8 +164,8 @@
         [ms appendString:_myLimit];
     }
     
-    FMDataTableSchema *dts = [DTM_SHARE featchSchema:_formatClassType];
-    FMDatabase * db = [DTM_SHARE featchDatabase:_formatClassType];
+    FMDataTableSchema *dts = [DTM_SHARE fetchSchema:_formatClassType];
+    FMDatabase * db = [DTM_SHARE fetchDatabase:_formatClassType];
     NSMutableArray *result = [NSMutableArray new];
     [db open];
     FMResultSet *set = [db executeQuery:ms];
