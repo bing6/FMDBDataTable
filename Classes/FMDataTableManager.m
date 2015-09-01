@@ -57,12 +57,12 @@
     return item;
 }
 
-- (FMDataTableSchema *)featchSchema:(Class)ctype
+- (FMDataTableSchema *)fetchSchema:(Class)ctype
 {
     return [[self featchCache:ctype] objectForKey:@"s1"];
 }
 
-- (FMDataTableStatement *)featchStatement:(Class)ctype
+- (FMDataTableStatement *)fetchStatement:(Class)ctype
 {
     return [[self featchCache:ctype] objectForKey:@"s2"];
 }
@@ -80,20 +80,20 @@
     [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(ctype)];
 }
 
-- (NSString *)featchPath:(Class)ctype
+- (NSString *)fetchPath:(Class)ctype
 {
     NSString * path = [self.map objectForKey:NSStringFromClass(ctype)];
     return path ? path : self.def;
 }
 
-- (FMDatabase *)featchDatabase:(Class)type
+- (FMDatabase *)fetchDatabase:(Class)type
 {
-    return [FMDatabase databaseWithPath:[self featchPath:type]];
+    return [FMDatabase databaseWithPath:[self fetchPath:type]];
 }
 
-- (FMDatabaseQueue *)featchDatabaseQueue:(Class)type
+- (FMDatabaseQueue *)fetchDatabaseQueue:(Class)type
 {
-    return [FMDatabaseQueue databaseQueueWithPath:[self featchPath:type]];
+    return [FMDatabaseQueue databaseQueueWithPath:[self fetchPath:type]];
 }
 
 - (NSString *)getCrateSql:(FMDataTableSchema *)dts
@@ -130,13 +130,13 @@
     NSString *cname = NSStringFromClass(ctype);
     //获取表结构
     NSString   *ts = [NSString stringWithFormat:@"select * from sqlite_master where type='table' and name='%@'", cname];
-    FMDatabase *db = [self featchDatabase:ctype];
+    FMDatabase *db = [self fetchDatabase:ctype];
     if (self.logEnabled) {
         NSLog(@"Path:%@", db.databasePath);
     }
     [db open];
     FMResultSet *set = [db executeQuery:ts];
-    FMDataTableSchema *dts = [self featchSchema:ctype];
+    FMDataTableSchema *dts = [self fetchSchema:ctype];
     //如果为YES，说明数据库已经有表了，那么我们需要判断是否要对字段更新
     if ([set next]) {
         NSString *text = [self getAlterTableSql:dts dbts:[set stringForColumn:@"sql"]];

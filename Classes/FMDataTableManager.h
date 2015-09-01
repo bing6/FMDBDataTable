@@ -31,11 +31,11 @@
 /**
  * @brief 获取当前模型的Schema
  */
-- (FMDataTableSchema *)featchSchema:(Class)ctype;
+- (FMDataTableSchema *)fetchSchema:(Class)ctype;
 /**
  * @brief 获取当前模型的标准SQL语句
  */
-- (FMDataTableStatement *)featchStatement:(Class)ctype;
+- (FMDataTableStatement *)fetchStatement:(Class)ctype;
 
 /**
  * @brief 绑定模型与数据据库的存储关系,并不是所有模型都必须要调用这个绑定方法的，
@@ -52,17 +52,17 @@
 /**
  * @brief 获取数据库存储路径
  */
-- (NSString *)featchPath:(Class)ctype;
+- (NSString *)fetchPath:(Class)ctype;
 
 /**
  * @brief 获取一个FMDatabase对象
  */
-- (FMDatabase *)featchDatabase:(Class)type;
+- (FMDatabase *)fetchDatabase:(Class)type;
 
 /**
  * @brief 获取一个FMDatabaseQueue对象
  */
-- (FMDatabaseQueue *)featchDatabaseQueue:(Class)type;
+- (FMDatabaseQueue *)fetchDatabaseQueue:(Class)type;
 
 /**
  * @brief 检查模型是否与物理数据库匹配完成

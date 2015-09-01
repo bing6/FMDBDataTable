@@ -43,7 +43,7 @@
 {
     self = [super init];
     if (self) {
-        FMDataTableSchema *dts = [DTM_SHARE featchSchema:[self class]];
+        FMDataTableSchema *dts = [DTM_SHARE fetchSchema:[self class]];
         for (NSDictionary *entry in dts.fields) {
             NSString * name = entry[DTS_F_NAME];
             NSObject * value = [data objectForKey:name];
@@ -100,7 +100,7 @@
 
 + (NSArray *)where:(NSString *)where args:(NSArray *)args order:(NSString *)order limit:(NSNumber *)limit offset:(NSNumber *)offset
 {
-    FMDataTableStatement * statement = [DTM_SHARE featchStatement:[self class]];
+    FMDataTableStatement * statement = [DTM_SHARE fetchStatement:[self class]];
     NSMutableString * ms = [NSMutableString stringWithString:statement.s_select];
     
     if (where) {
@@ -128,7 +128,7 @@
     }
     
     NSMutableArray *result = [NSMutableArray new];
-    FMDatabase * db = [DTM_SHARE featchDatabase:[self class]];
+    FMDatabase * db = [DTM_SHARE fetchDatabase:[self class]];
     
     [db open];
     FMResultSet *set = [db executeQuery:ms withArgumentsInArray:args];
@@ -159,7 +159,7 @@
     NSString *cmd = [[NSString alloc] initWithFormat:query arguments:args];
     va_end(args);
     
-    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
+    FMDatabase *db = [DTM_SHARE fetchDatabase:[self class]];
     [db open];
     FMResultSet *set = [db executeQuery:cmd];
     while ([set next]) {
@@ -179,7 +179,7 @@
     NSString *cmd = [[NSString alloc] initWithFormat:sql arguments:args];
     va_end(args);
     
-    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
+    FMDatabase *db = [DTM_SHARE fetchDatabase:[self class]];
     [db open];
     [db executeUpdate:cmd];
     [db close];
@@ -197,9 +197,9 @@
         self.createdAt = self.updatedAt;
     }
     
-    FMDataTableStatement * statement = [DTM_SHARE featchStatement:[self class]];
+    FMDataTableStatement * statement = [DTM_SHARE fetchStatement:[self class]];
 
-    FMDatabase *db= [DTM_SHARE featchDatabase:[self class]];
+    FMDatabase *db= [DTM_SHARE fetchDatabase:[self class]];
     [db open];
     [db executeUpdate:statement.s_replace withArgumentsInArray:[self toValues]];
     [db close];
@@ -211,7 +211,7 @@
 
 - (NSArray *)toValues
 {
-    FMDataTableSchema *dts = [DTM_SHARE featchSchema:[self class]];
+    FMDataTableSchema *dts = [DTM_SHARE fetchSchema:[self class]];
     NSMutableArray * ma = [NSMutableArray new];
     for (NSDictionary *entry in dts.fields) {
         id obj = [self valueForKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
@@ -226,8 +226,8 @@
 
 - (void)destroy
 {
-    FMDataTableStatement *statement = [DTM_SHARE featchStatement:[self class]];
-    FMDatabase *db = [DTM_SHARE featchDatabase:[self class]];
+    FMDataTableStatement *statement = [DTM_SHARE fetchStatement:[self class]];
+    FMDatabase *db = [DTM_SHARE fetchDatabase:[self class]];
     [db open];
     [db executeQuery:statement.s_delete withArgumentsInArray:@[ self.pid ]];
     [db close];
@@ -243,8 +243,8 @@
 
 + (void)batchSave:(NSArray *)records complete:(void (^)(id, NSError *))complete
 {
-    FMDatabaseQueue *queue = [DTM_SHARE featchDatabaseQueue:[self class]];
-    FMDataTableStatement *statement = [DTM_SHARE featchStatement:[self class]];
+    FMDatabaseQueue *queue = [DTM_SHARE fetchDatabaseQueue:[self class]];
+    FMDataTableStatement *statement = [DTM_SHARE fetchStatement:[self class]];
     [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try {
             for (id entry in records) {
