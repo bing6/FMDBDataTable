@@ -87,13 +87,16 @@
     NSLog(@"%@", [Member findByPid:@"D57F411A-0587-4E4C-9596-1C0C05041715"]);
 
     //链式查询
-    FMDataTableQuery *query = [Member query]
-                                .dt_where(@"firstName", @"Lucy")
-                                .dt_or(@"lastName", @"Zhang")
-                                .dt_orderByDesc(@"createdAt")
-                                .dt_limit(2,2);
-    NSLog(@"%@", [query toList]);
-    NSLog(@"%@", [[Member query].dt_where(@"firstName", @"Lucy") toList]);
+    FMDataTableQuery * query = [Member query];
+    
+    NSLog(@"%@", query.where(@"sss", @(4)).fetchFirst());
+    
+    NSArray *result = [Member query]
+                        .where(@"sss", @(4))
+                        .whereOr(@"lastName", @"Zhang")
+                        .orderByDesc(@"createdAt")
+                        .fetchArray();
+    NSLog(@"%@", result);
 
 
 # Installation
