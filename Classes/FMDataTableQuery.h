@@ -8,15 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^FMDataTableQueryComplete)(NSArray *result);
-
-@interface FMDataTableQueryResult : NSObject
-
-@property (nonatomic, strong) id data;
-@property (nonatomic, strong) NSString *sql;
-
-@end
-
 @interface FMDataTableQuery : NSObject
 
 - (instancetype)initWithClass:(Class)ctype;
