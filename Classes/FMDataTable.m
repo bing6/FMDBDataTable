@@ -55,24 +55,6 @@
     return self;
 }
 
-- (instancetype)initWithPid:(NSString *)pid
-{
-    self = [super init];
-    if (self) {
-        self.pid = pid;
-    }
-    return self;
-}
-
-- (instancetype)initWithIntPid:(NSInteger)pid
-{
-    self = [super init];
-    if (self) {
-        self.pid = [NSString stringWithFormat:@"%lld", (long long)pid];
-    }
-    return self;
-}
-
 - (NSInteger)pid_i
 {
     return [self.pid integerValue];

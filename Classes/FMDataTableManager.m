@@ -101,7 +101,7 @@
     NSMutableString *text = [NSMutableString stringWithFormat:@"create table if not exists [%@] (", dts.tableName];
     for (NSDictionary *entry in dts.fields) {
         if ([entry[DTS_F_NAME] isEqualToString:@"pid"]) {
-            [text appendFormat:@"[%@] %@ unique,", entry[DTS_F_NAME], entry[DTS_F_TYPE] ];
+            [text appendFormat:@"[%@] %@ not null unique,", entry[DTS_F_NAME], entry[DTS_F_TYPE] ];
         } else {
             [text appendFormat:@"[%@] %@,", entry[DTS_F_NAME], entry[DTS_F_TYPE]];
         }

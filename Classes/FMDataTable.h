@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "FMDataTableManager.h"
 
+
 @interface FMDataTable : NSObject
 
 /**
  * @brief 默认属性:主键ID
+ * 2015-09-04 将NSString修改为id,这是为了适配NSNumber类型
  */
-@property (nonatomic, strong) NSString *pid;
+@property (nonatomic, strong) id pid;
 /**
  * @brief 默认属性:记录创建时间
  */
@@ -23,17 +25,6 @@
  * @brief 默认属性:记录修改时间
  */
 @property (nonatomic, strong) NSNumber *updatedAt;
-
-/**
- * @brief 自定义主键
- */
-- (instancetype)initWithPid:(NSString *)pid;
-- (instancetype)initWithIntPid:(NSInteger)pid;
-
-/**
- * @brief 返回一个INT类型的主键
- */
-@property (nonatomic, assign, readonly) NSInteger pid_i;
 
 
 /**
@@ -109,3 +100,13 @@
 + (NSArray *)findLikeWithField:(NSString *)f value:(id)v;
 
 @end
+
+//获取PID的Int值
+static inline NSInteger __int(FMDataTable *dt) {
+    if ([dt.pid isKindOfClass:[NSNumber class]]) {
+        return [dt.pid integerValue];
+    }
+    return 0;
+}
+
+
