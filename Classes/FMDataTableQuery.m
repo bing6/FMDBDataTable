@@ -127,7 +127,7 @@
         page = MAX(0, page -1);
         size = MAX(1, size);
         _myLimit = nil;
-        _myLimit = [NSMutableString stringWithFormat:@"limit %d, %d", (int)((page - 1) * size), (int)size];
+        _myLimit = [NSMutableString stringWithFormat:@"limit %d, %d", (int)(page * size), (int)size];
         return self;
     };
 }
@@ -143,6 +143,36 @@
 {
     return ^(void){
         return [self first];
+    };
+}
+
+- (NSNumber *(^)())fetchCount
+{
+    return ^(void){
+        
+        NSString *name = NSStringFromClass(_formatClassType);
+        NSMutableString * ms = [[NSMutableString alloc] initWithFormat:@"select count(*) from %@", name];
+        if (_myWhere) {
+            [ms appendString:@" "];
+            [ms appendString:_myWhere];
+        }
+        if (_myOrder) {
+            [ms appendString:@" "];
+            [ms appendString:_myOrder];
+        }
+        if (_myLimit) {
+            [ms appendString:@" "];
+            [ms appendString:_myLimit];
+        }
+        FMDatabase * db = [DTM_SHARE fetchDatabase:_formatClassType];
+        [db open];
+        FMResultSet *set = [db executeQuery:ms];
+        NSInteger result = 0;
+        if ([set next]) {
+            result = [set intForColumnIndex:0];
+        }
+        [db close];
+        return @(result);
     };
 }
 
@@ -186,7 +216,7 @@
     if (DTM_SHARE.logEnabled) {
         NSLog(@"SQL:%@", ms);
     }
-
+    
     return result;
 }
 

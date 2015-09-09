@@ -98,7 +98,7 @@
 //                        .fetchArray();
 //    NSLog(@"%@", result);
 
-
+    NSLog(@"%@", [Member query].fetchCount());
 }
 
 - (void)didReceiveMemoryWarning {

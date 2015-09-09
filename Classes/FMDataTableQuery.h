@@ -56,6 +56,9 @@
  * @brief 执行查询,返回一个对象
  */
 @property (nonatomic, copy) id (^fetchFirst)();
-
+/**
+ * @brief 执行查询,返回一个总数
+ */
+@property (nonatomic, copy) NSNumber * (^fetchCount)();
 
 @end
