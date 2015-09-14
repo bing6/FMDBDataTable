@@ -31,23 +31,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    /*******************************************************
-     * 全局设置
-     *
-     * DTM_SHARE是FMDataTableManager的一个共享实例,
-     * 我们可以它来设置日志输出,模型的存放位置等操作,
-     * 当然你什么都不做也是可以的。
-     *******************************************************/
-    
-    //打开日志输出
-    [DTM_SHARE setLogEnabled:YES];
-    
-    //设定模型数据存储在那个库下
-    //默认会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
-    [DTM_SHARE bindModelWithName:@"Company" dbName:@"test1"];
-    [DTM_SHARE bindModelWithName:@"Employee" dbName:@"test2"];
-
-    
+//    /*******************************************************
+//     * 全局设置
+//     *
+//     * DTM_SHARE是FMDataTableManager的一个共享实例,
+//     * 我们可以它来设置日志输出,模型的存放位置等操作,
+//     * 当然你什么都不做也是可以的。
+//     *******************************************************/
+//    
+//    //打开日志输出
+//    [DTM_SHARE setLogEnabled:YES];
+//    
+//    //设定模型数据存储在那个库下
+//    //默认会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
+//    //这时需要注意的是绑定之前,不要对模型做任何的方法调用,因为会触发initialize方法,
+//    //数据表的建立都是在这个方法内做的.
+//    //设置我们建议放到AppDelegate做去做
+//    [DTM_SHARE bindModelWithName:@"Company" dbName:@"test1"];
+//    [DTM_SHARE bindModelWithName:@"Employee" dbName:@"test2"];
+//
+//    
 //    /*******************************************************
 //     * 演示保存数据
 //     *
@@ -60,7 +63,7 @@
 //     *******************************************************/
 //    
 //    //单一记录保存
-    Company *myCom = [Company new];
+//    Company *myCom = [Company new];
 //
 //    [myCom setPid:@(8888)];
 //    [myCom setName:@"北京清大世纪教育集团"];
@@ -89,7 +92,7 @@
 //    [Employee batchSave:@[ emp2, emp3 ] complete:^(id res, NSError *err) {
 //        
 //    }];
-//    
+//
 //    //修改数据
 //    [emp2 setAge:25];
 //    [emp1 save];
@@ -129,7 +132,7 @@
 //    
 //    //返回一条数据,根据主键ID查询获取数据
 //    Employee *result7 = [Employee findByPid:@727];
-//    
+//
 //    //返回多条数据,根据字段值获取
 //    NSArray *result8 = [Employee findEqualWithField:@"firstName" value:@"KeQiang"];
 //    
@@ -144,13 +147,13 @@
 //     * 演示链式查询
 //     *******************************************************/
 //
-//    //返回多条数据,条件
-//    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
-//    //返回多条数据,排序
-//    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
-//    //返回数据条数
-//    NSNumber *result13 = [Employee query].fetchCount();
-//    
+    //返回多条数据,条件
+    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
+    //返回多条数据,排序
+    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
+    //返回数据条数
+    NSNumber *result13 = [Employee query].fetchCount();
+//
 //    NSLog(@"%@", result1);
 //    NSLog(@"%@", result2);
 //    NSLog(@"%@", result3);
