@@ -46,8 +46,8 @@
  * @param dbName    数据库名称
  * @param dbPath    存储路径(默认存储在沙盒下的Library/Caches/)
  */
-- (void)bindModelWithClass:(Class)classType dbName:(NSString *)dbName dbPath:(NSString *)dbPath;
-- (void)bindModelWithClass:(Class)classType dbName:(NSString *)dbName;
+- (void)bindModelWithName:(NSString *)className dbName:(NSString *)dbName dbPath:(NSString *)dbPath;
+- (void)bindModelWithName:(NSString *)className dbName:(NSString *)dbName;
 
 /**
  * @brief 获取数据库存储路径

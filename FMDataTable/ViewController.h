@@ -9,16 +9,24 @@
 #import <UIKit/UIKit.h>
 #import "FMDataTable.h"
 
-@interface Member : FMDataTable
+@interface Employee : FMDataTable
 
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *lastName;
-@property (nonatomic, strong) NSString *avatar;
-@property (nonatomic, assign) NSInteger sss;
+@property (nonatomic, assign) NSInteger age;
 
 @property (nonatomic, strong, readonly) NSString *fullName;
 
-+ (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSString *)avatar;
+//+ (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSNumber *)age;
+
+@end
+
+@interface Company : FMDataTable
+
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *address;
+
+//+ (instancetype)createInstance:(NSNumber *)companyId :(NSString *)name :(NSString *)address;
 
 @end
 

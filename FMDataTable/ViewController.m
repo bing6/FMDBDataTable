@@ -9,15 +9,28 @@
 #import "ViewController.h"
 #import "FMDataTable+Query.h"
 
-@implementation Member
+@implementation Company
 
-+ (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSString *)avatar
+- (instancetype)init
 {
-    Member * tmp = [Member new];
-    tmp.firstName = firstName;
-    tmp.lastName  = lastName;
-    tmp.avatar    = avatar;
-    return tmp;
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+@end
+
+@implementation Employee
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
 }
 
 - (NSString *)fullName
@@ -35,70 +48,141 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //设置输出日志
-    DTM_SHARE.logEnabled = YES;
+    
+    /*******************************************************
+     * 全局设置
+     *
+     * DTM_SHARE是FMDataTableManager的一个共享实例,
+     * 我们可以它来设置日志输出,模型的存放位置等操作,
+     * 其实什么都不做也是可以的。
+     *******************************************************/
+    
+    //打开日志输出
+    [DTM_SHARE setLogEnabled:YES];
+    
+    //设定模型数据存储在那个库下
+    //默认会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
+    [DTM_SHARE bindModelWithName:@"Company" dbName:@"test1"];
+    [DTM_SHARE bindModelWithName:@"Employee" dbName:@"test2"];
 
-//    Member * obj1 = [Member createInstance:@"Jack" :@"Liu" :@"http://www.baidu.com"];
-//    Member * obj2 = [Member createInstance:@"Lucy" :@"Wang" :@"http://www.baidu.com"];
-//    Member * obj3 = [Member createInstance:@"Tom" :@"Zhang" :@"http://www.baidu.com"];
-//    Member * obj4 = [Member createInstance:@"Howard" :@"Zhao" :@"http://www.baidu.com"];
-
-//    obj1.pid = @(123);
-//    obj1.sss = 1;
-//    obj2.pid = @(124);
-//    obj2.sss = 2;
-//    obj3.pid = @(125);
-//    obj3.sss = 3;
-//    obj4.pid = @(126);
-//    obj4.sss = 4;
+    
+//    /*******************************************************
+//     * 演示保存数据
+//     *
+//     * 模型继承FMDataTable默认有三个属性
+//     * 1.pid 用于存放唯一ID,id类型(之所以使用ID类型是考虑到网站上拿到的数据可能是INT型),默认会产生一个GUID
+//     * 2.createdAt 记录产生时间,double类型
+//     * 3,udpatedAt 记录修改时间,double类型
+//     * 
+//     * 保存对象需要调用save方法,如果记录存在就更新,没有就添加.
+//     *******************************************************/
 //    
-//    //单个保存数据
-//    [obj1 save];
-//    [obj2 save];
-//    [obj3 save];
-//    [obj4 save];
-
+//    //单一记录保存
+//    Company *myCom = [Company new];
+//   
+//    [myCom setPid:@(8888)];
+//    [myCom setName:@"北京清大世纪教育集团"];
+//    [myCom setAddress:@"北京市鲁谷路74号院"];
+//    [myCom save];
 //
-//    obj1.firstName = @"XiaoMing";
-//    //修改数据
-//    [obj1 save];
-
-//    //批量更橷数据,存在相同的pid更新,返之插入
-//    [Member batchSave:@[obj1, obj2, obj3, obj4] complete:^(id res, NSError *err) {
+//    Employee *emp1 = [Employee new];
+//    
+//    [emp1 setPid:@(727)];
+//    [emp1 setFirstName:@"KeQiang"];
+//    [emp1 setLastName:@"Li"];
+//    [emp1 setAge:18];
+//    [emp1 save];
+//
+//    //批理数据保存
+//    Employee *emp2 = [Employee new];
+//    [emp2 setPid:@(800)];
+//    [emp2 setFirstName:@"JinPin"];
+//    [emp2 setLastName:@"Xi"];
+//    [emp2 setAge:22];
+//    Employee *emp3 = [Employee new];
+//    [emp3 setPid:@(810)];
+//    [emp3 setFirstName:@"QiShan"];
+//    [emp3 setLastName:@"Wang"];
+//    [emp3 setAge:20];
+//    [Employee batchSave:@[ emp2, emp3 ] complete:^(id res, NSError *err) {
 //        
 //    }];
-    
-//    //删除数据
-//    [obj1 destroy];
-    
-//    //各种查询
-//    NSLog(@"%@", [Member order:@"createdAt desc"]);
-//    NSLog(@"%@", [Member where:@"firstName = ?" args:@[ @"Jack" ]]);
-//    NSLog(@"%@", [Member where:@"firstName = ?" args:@[ @"Lucy" ] order:@"createdAt desc" limit:@2 offset:@1]);
-//    NSLog(@"%@", [Member executeQuery:@"select * from member"]);
-//    NSLog(@"%@", [Member first:@"pid=?" args:@[@"D57F411A-0587-4E4C-9596-1C0C05041715"]]);
-//    NSLog(@"%@", [Member findEqualWithField:@"firstName" value:@"XiaoMing"]);
-//    NSLog(@"%@", [Member findNotEqualWithField:@"firstName" value:@"XiaoMing"]);
-//    NSLog(@"%@", [Member findLikeWithField:@"firstName" value:@"Xiao"]);
-//    NSLog(@"%@", [Member findByPid:@(126)]);
+//    
+//    //修改数据
+//    [emp2 setAge:25];
+//    [emp1 save];
 //
-//    //清除所有数据
-//    [Member clear];
-    
-
-//    //链式查询
-//    FMDataTableQuery * query = [Member query];
+//    /*******************************************************
+//     * 演示删除数据
+//     *******************************************************/
 //    
-//    NSLog(@"%@", query.where(@"sss", @(4)).fetchFirst());
+//    //删除一条数据
+//    [emp1 destroy];
 //    
-//    NSArray *result = [Member query]
-//                        .where(@"sss", @(4))
-//                        .whereOr(@"lastName", @"Zhang")
-//                        .orderByDesc(@"createdAt")
-//                        .fetchArray();
-//    NSLog(@"%@", result);
+//    //删除所有数据
+//    [Employee clear];
+//    
+//    
+//    /*******************************************************
+//     * 演示查询数据
+//     *******************************************************/
+//    
+//    //返回多条数据,条件
+//    NSArray *result1 = [Employee where:@"age > ?" args:@[ @(22) ]];
+//    
+//    //返回多条数据,条件
+//    NSArray *result2 = [Employee where:@"age > ?" args:@[ @(22)] order:@"age desc" limit:nil offset:nil];
+//    
+//    //返回多条数据,条件,排序,分页
+//    NSArray *result3 = [Employee where:@"age > ?" args:@[ @(22)] order:@"age desc" limit:@(20) offset:@1];
+//    
+//    //返回多条数据,排序
+//    NSArray *result4 = [Employee order:@"age desc"];
+//    
+//    //返回多条数据,排序,分页
+//    NSArray *result5 = [Employee order:@"age desc" limit:@20 offset:@1];
+//    
+//    //返回一条数据
+//    Employee *result6 = [Employee first:@"firstName = ?" args:@[ @"KeQiang" ]];
+//    
+//    //返回一条数据,根据主键ID查询获取数据
+//    Employee *result7 = [Employee findByPid:@727];
+//    
+//    //返回多条数据,根据字段值获取
+//    NSArray *result8 = [Employee findEqualWithField:@"firstName" value:@"KeQiang"];
+//    
+//    //返回多条数据,根据字段值取返获取
+//    NSArray *result9 = [Employee findNotEqualWithField:@"firstName" value:@"KeQiang"];
+//    
+//    //返回多条数据,根据字段值模糊匹配
+//    NSArray *result10 = [Employee findLikeWithField:@"firstName" value:@"Ke"];
+//    
+//    
+//    /*******************************************************
+//     * 演示链式查询
+//     *******************************************************/
+//
+//    //返回多条数据,条件
+//    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
+//    //返回多条数据,排序
+//    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
+//    //返回数据条数
+//    NSNumber *result13 = [Employee query].fetchCount();
+//    
+//    NSLog(@"%@", result1);
+//    NSLog(@"%@", result2);
+//    NSLog(@"%@", result3);
+//    NSLog(@"%@", result4);
+//    NSLog(@"%@", result5);
+//    NSLog(@"%@", result6);
+//    NSLog(@"%@", result7);
+//    NSLog(@"%@", result8);
+//    NSLog(@"%@", result9);
+//    NSLog(@"%@", result10);
+//    NSLog(@"%@", result11);
+//    NSLog(@"%@", result12);
+//    NSLog(@"%@", result13);
 
-    NSLog(@"%@", [Member query].fetchCount());
 }
 
 - (void)didReceiveMemoryWarning {

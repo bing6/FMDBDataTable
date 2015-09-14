@@ -70,15 +70,25 @@
 #pragma mark
 #pragma mark 表与库的关系映射
 
-- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName
+- (void)bindModelWithName:(NSString *)className dbName:(NSString *)dbName
 {
-    [self bindModelWithClass:ctype dbName:dbName dbPath:CACHE_PATH];
+    [self bindModelWithName:className dbName:dbName dbPath:CACHE_PATH];
 }
 
-- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName dbPath:(NSString *)dbPath
+- (void)bindModelWithName:(NSString *)className dbName:(NSString *)dbName dbPath:(NSString *)dbPath
 {
-    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(ctype)];
+    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:className];
 }
+
+//- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName
+//{
+//    [self bindModelWithClass:ctype dbName:dbName dbPath:CACHE_PATH];
+//}
+//
+//- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName dbPath:(NSString *)dbPath
+//{
+//    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(ctype)];
+//}
 
 - (NSString *)fetchPath:(Class)ctype
 {

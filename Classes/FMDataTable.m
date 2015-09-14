@@ -55,11 +55,6 @@
     return self;
 }
 
-- (NSInteger)pid_i
-{
-    return [self.pid integerValue];
-}
-
 + (NSArray *)order:(NSString *)order
 {
     return [self order:order limit:nil offset:nil];
