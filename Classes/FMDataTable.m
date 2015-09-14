@@ -34,9 +34,17 @@
 {
     self = [super init];
     if (self) {
-        self.pid = [self GUID];
+        
     }
     return self;
+}
+
+- (id)pid
+{
+    if (_pid == nil) {
+        _pid = [self GUID];
+    }
+    return _pid;
 }
 
 - (instancetype)initWithDict:(NSDictionary *)data

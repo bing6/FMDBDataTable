@@ -11,27 +11,9 @@
 
 @implementation Company
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        
-    }
-    return self;
-}
-
 @end
 
 @implementation Employee
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        
-    }
-    return self;
-}
 
 - (NSString *)fullName
 {
@@ -78,8 +60,8 @@
 //     *******************************************************/
 //    
 //    //单一记录保存
-//    Company *myCom = [Company new];
-//   
+    Company *myCom = [Company new];
+//
 //    [myCom setPid:@(8888)];
 //    [myCom setName:@"北京清大世纪教育集团"];
 //    [myCom setAddress:@"北京市鲁谷路74号院"];

@@ -17,8 +17,6 @@
 
 @property (nonatomic, strong, readonly) NSString *fullName;
 
-//+ (instancetype)createInstance:(NSString *)firstName :(NSString *)lastName :(NSNumber *)age;
-
 @end
 
 @interface Company : FMDataTable
@@ -26,12 +24,10 @@
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *address;
 
-//+ (instancetype)createInstance:(NSNumber *)companyId :(NSString *)name :(NSString *)address;
 
 @end
 
 @interface ViewController : UIViewController
-
 
 @end
 
