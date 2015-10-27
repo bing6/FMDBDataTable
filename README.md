@@ -155,5 +155,5 @@
 
 # Installation
 
-pod 'FMDBDataTable', '~> 0.6'
+pod 'FMDBDataTable', '~> 0.7.1'
 
