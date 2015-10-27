@@ -72,7 +72,18 @@
  * @brief 删除数据
  */
 - (void)destroy;
-
+/**
+ * @brief 根据唯一ID删除记录
+ */
++ (void)destroyByPid:(id)pid;
+/**
+ * @brief 根据字段名做条件删除记录
+ */
++ (void)destroyWithField:(NSString *)fieldName value:(id)value;
+/**
+ * @brief 自定义条件删除数据
+ */
++ (void)destroyWithWhere:(NSString *)where args:(NSArray *)args;
 /**
  * @brief 清楚所有数据
  */

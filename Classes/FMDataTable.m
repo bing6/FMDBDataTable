@@ -221,6 +221,47 @@
     }
 }
 
++ (void)destroyByPid:(id)pid
+{
+    FMDataTableStatement *statement = [DTM_SHARE fetchStatement:[self class]];
+    FMDatabase *db = [DTM_SHARE fetchDatabase:[self class]];
+    [db open];
+    [db executeQuery:statement.s_delete withArgumentsInArray:@[ pid ]];
+    [db close];
+    if (DTM_SHARE.logEnabled) {
+        NSLog(@"SQL:%@", statement.s_delete);
+    }
+}
+
++ (void)destroyWithField:(NSString *)fieldName value:(id)value
+{
+    NSString *where = [NSString stringWithFormat:@"%@ = ?", fieldName];
+    [self destroyWithWhere:where args:@[ value ]];
+}
+
++ (void)destroyWithWhere:(NSString *)where args:(NSArray *)args
+{
+    FMDataTableStatement * statement = [DTM_SHARE fetchStatement:[self class]];
+    NSMutableString * ms = [NSMutableString stringWithString:statement.s_delete_all];
+    
+    if (where) {
+        if ([[where lowercaseString] hasPrefix:@"where"] ) {
+            [ms appendString:where];
+            [ms appendString:@" "];
+        } else {
+            [ms appendFormat:@"where %@ ", where];
+        }
+    }
+    
+    FMDatabase * db = [DTM_SHARE fetchDatabase:[self class]];
+    [db open];
+    [db executeUpdate:ms withArgumentsInArray:args];
+    [db close];
+    if (DTM_SHARE.logEnabled) {
+        NSLog(@"SQL:%@", ms);
+    }
+}
+
 + (void)clear
 {
     [self executeNonQuery:@"delete from %@", NSStringFromClass([self class])];
