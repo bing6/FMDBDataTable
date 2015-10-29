@@ -39,9 +39,9 @@
 //     * 当然你什么都不做也是可以的。
 //     *******************************************************/
 //    
-//    //打开日志输出
-//    [DTM_SHARE setLogEnabled:YES];
-//    
+    //打开日志输出
+    [DTM_SHARE setLogEnabled:YES];
+//
 //    //设定模型数据存储在那个库下
 //    //默认会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
 //    //这时需要注意的是绑定之前,不要对模型做任何的方法调用,因为会触发initialize方法,
@@ -103,7 +103,12 @@
 //    
 //    //删除一条数据
 //    [emp1 destroy];
-//    
+//    //根据唯一ID删除
+//    [Employee destroyByPid:@(727)];
+//    //根据字段删除
+//    [Employee destroyWithField:@"lastName" value:@"Xi"];
+//    //自定义条件删除
+//    [Employee destroyWithWhere:@"lastName = ?" args:@[ @"Wang" ]];
 //    //删除所有数据
 //    [Employee clear];
 //    
@@ -164,9 +169,9 @@
 //    NSLog(@"%@", result8);
 //    NSLog(@"%@", result9);
 //    NSLog(@"%@", result10);
-//    NSLog(@"%@", result11);
-//    NSLog(@"%@", result12);
-//    NSLog(@"%@", result13);
+    NSLog(@"%@", result11);
+    NSLog(@"%@", result12);
+    NSLog(@"%@", result13);
 
 }
 
