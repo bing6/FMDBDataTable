@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "FMDataTable+Query.h"
+#import "FMDataTable+KVC.h"
 
 @implementation Company
 
