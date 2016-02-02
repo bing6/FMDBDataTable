@@ -152,8 +152,23 @@
     //返回数据条数
     NSNumber *result13 = [Employee query].fetchCount();
 
+#动态创建表
+
+    //首先要创建一个基类,在根据基类创建动态类型
+    id ctype = __GetDynamicTableType(@"Message_12324883", [Message class]);
+    
+    Message *msg = __NEW(ctype);
+    msg.body = @"你好";
+    [msg save];
+    
+    FMDataTableQuery *query = nil;
+    if ([ctype respondsToSelector:@selector(query)]) {
+        query = [ctype performSelector:@selector(query)];
+    }
+    
+    NSLog(@"%@", query.fetchArray());
 
 # Installation
 
-pod 'FMDBDataTable', '~> 0.7.1'
+pod 'FMDBDataTable', '~> 0.7.4'
 
