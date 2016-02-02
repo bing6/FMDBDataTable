@@ -56,7 +56,17 @@
             NSString * name = entry[DTS_F_NAME];
             NSObject * value = [data objectForKey:name];
             if (value && ![value isEqual:[NSNull null]]) {
-                [self setValue:value forKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
+                if ([self isSet:[entry objectForKey:DTS_F_OBJ_TYPE]]) {
+             
+                    id data = [NSJSONSerialization JSONObjectWithData:[(NSString *)value dataUsingEncoding:NSUTF8StringEncoding]
+                                                                   options:NSJSONReadingAllowFragments
+                                                                     error:nil];
+                    if (data) {
+                        [self setValue:data forKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
+                    }
+                } else {
+                    [self setValue:value forKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
+                }
             }
         }
     }
@@ -194,6 +204,17 @@
     }
 }
 
+//是否为集合
+- (BOOL)isSet:(NSString *)ocType {
+    if ([ocType isEqualToString:@"T@\"NSDictionary\""] ||
+        [ocType isEqualToString:@"T@\"NSMutableDictionary\""] ||
+        [ocType isEqualToString:@"T@\"NSArray\""] ||
+        [ocType isEqualToString:@"T@\"NSMutableArray\""]) {
+        return YES;
+    }
+    return NO;
+}
+
 - (NSArray *)toValues
 {
     FMDataTableSchema *dts = [DTM_SHARE fetchSchema:[self class]];
@@ -203,7 +224,21 @@
         if (obj == nil) {
             [ma addObject:[NSNull null]];
         } else {
-            [ma addObject:[self valueForKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]]];
+            if ([self isSet:[entry objectForKey:DTS_F_OBJ_TYPE]]) {
+                id val = [self valueForKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]];
+                NSData *data = [NSJSONSerialization dataWithJSONObject:val
+                                                                options:NSJSONWritingPrettyPrinted
+                                                                  error:nil];
+                if (data) {
+                    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    [ma addObject:str];
+                } else {
+                    [ma addObject:[NSNull null]];
+                }
+                
+            } else {
+                [ma addObject:[self valueForKeyPath:[entry objectForKey:DTS_F_OBJ_NAME]]];
+            }
         }
     }
     return ma;

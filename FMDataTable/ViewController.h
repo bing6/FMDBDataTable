@@ -27,6 +27,18 @@
 
 @end
 
+@interface Message : FMDataTable
+
+@property (nonatomic, strong) NSString *session;
+@property (nonatomic, strong) NSString *msgId;
+@property (nonatomic, strong) NSString *body;
+@property (nonatomic, strong) NSDictionary *data;
+@property (nonatomic, strong) NSMutableDictionary *data2;
+@property (nonatomic, strong) NSArray *data3;
+@property (nonatomic, strong) NSMutableArray *data4;
+
+@end
+
 @interface ViewController : UIViewController
 
 @end

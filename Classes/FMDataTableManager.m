@@ -80,16 +80,6 @@
     [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:className];
 }
 
-//- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName
-//{
-//    [self bindModelWithClass:ctype dbName:dbName dbPath:CACHE_PATH];
-//}
-//
-//- (void)bindModelWithClass:(Class)ctype dbName:(NSString *)dbName dbPath:(NSString *)dbPath
-//{
-//    [self.map setObject:[NSString stringWithFormat:@"%@/%@.db", dbPath, dbName] forKey:NSStringFromClass(ctype)];
-//}
-
 - (NSString *)fetchPath:(Class)ctype
 {
     NSString * path = [self.map objectForKey:NSStringFromClass(ctype)];

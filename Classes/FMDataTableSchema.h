@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define DTS_F_OBJ_NAME @"__DTS_F_OBJ_NAME"
-//#define DTS_F_OBJ_TYPE @"__DTS_F_OBJ_TYPE"
+#define DTS_F_OBJ_TYPE @"__DTS_F_OBJ_TYPE"
 #define DTS_F_NAME     @"__DTS_F_NAME"
 #define DTS_F_TYPE     @"__DTS_F_TYPE"
 

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FMDataTableManager.h"
-
+#import <objc/runtime.h>
 
 @interface FMDataTable : NSObject
 
@@ -112,6 +112,8 @@
 
 @end
 
+#define __NEW(ctype) [ctype new]
+
 //获取PID的Int值
 static inline NSInteger __int(FMDataTable *dt) {
     if ([dt.pid isKindOfClass:[NSNumber class]]) {
@@ -119,5 +121,17 @@ static inline NSInteger __int(FMDataTable *dt) {
     }
     return 0;
 }
-
+/**
+ *  动态创建数据表
+ *
+ *  @param name       表名
+ *  @param superClass 基类类型
+ *
+ *  @return Class
+ */
+static inline id __GetDynamicTableType(NSString *name, Class superClass) {
+    Class dynamicClass = objc_allocateClassPair(superClass, [name UTF8String], 0);
+    objc_registerClassPair(dynamicClass);
+    return dynamicClass;
+}
 

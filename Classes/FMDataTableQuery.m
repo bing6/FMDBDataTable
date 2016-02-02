@@ -176,6 +176,16 @@
     };
 }
 
+//是否为集合
+- (BOOL)isSet:(NSString *)ocType {
+    if ([ocType isEqualToString:@"T@\"NSDictionary\""] ||
+        [ocType isEqualToString:@"T@\"NSMutableDictionary\""] ||
+        [ocType isEqualToString:@"T@\"NSArray\""] ||
+        [ocType isEqualToString:@"T@\"NSMutableArray\""]) {
+        return YES;
+    }
+    return NO;
+}
 
 - (NSArray *)toList
 {
@@ -206,7 +216,17 @@
             NSString *name = entry[DTS_F_NAME];
             NSObject *value = [item objectForKey:name];
             if ([value isEqual:[NSNull null]] == NO) {
-                [data setValue:value forKeyPath:name];
+                if ([self isSet:[entry objectForKey:DTS_F_OBJ_TYPE]]) {
+                    
+                    id tmp = [NSJSONSerialization JSONObjectWithData:[(NSString *)value dataUsingEncoding:NSUTF8StringEncoding]
+                                                              options:NSJSONReadingAllowFragments
+                                                                error:nil];
+                    if (tmp) {
+                        [data setValue:tmp forKeyPath:name];
+                    }
+                } else {
+                    [data setValue:value forKeyPath:name];
+                }
             }
         }
         [result addObject:data];

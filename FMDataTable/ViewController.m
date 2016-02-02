@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "FMDataTable+Query.h"
 #import "FMDataTable+KVC.h"
+#import <objc/runtime.h>
 
 @implementation Company
 
@@ -20,6 +21,11 @@
 {
     return [NSString stringWithFormat:@"%@.%@", self.firstName, self.lastName];
 }
+
+@end
+
+@implementation Message
+
 
 @end
 
@@ -153,27 +159,45 @@
 //     * 演示链式查询
 //     *******************************************************/
 //
-    //返回多条数据,条件
-    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
-    //返回多条数据,排序
-    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
-    //返回数据条数
-    NSNumber *result13 = [Employee query].fetchCount();
-//
-//    NSLog(@"%@", result1);
-//    NSLog(@"%@", result2);
-//    NSLog(@"%@", result3);
-//    NSLog(@"%@", result4);
-//    NSLog(@"%@", result5);
-//    NSLog(@"%@", result6);
-//    NSLog(@"%@", result7);
-//    NSLog(@"%@", result8);
-//    NSLog(@"%@", result9);
-//    NSLog(@"%@", result10);
-    NSLog(@"%@", result11);
-    NSLog(@"%@", result12);
-    NSLog(@"%@", result13);
+//    //返回多条数据,条件
+//    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
+//    //返回多条数据,排序
+//    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
+//    //返回数据条数
+//    NSNumber *result13 = [Employee query].fetchCount();
+////
+////    NSLog(@"%@", result1);
+////    NSLog(@"%@", result2);
+////    NSLog(@"%@", result3);
+////    NSLog(@"%@", result4);
+////    NSLog(@"%@", result5);
+////    NSLog(@"%@", result6);
+////    NSLog(@"%@", result7);
+////    NSLog(@"%@", result8);
+////    NSLog(@"%@", result9);
+////    NSLog(@"%@", result10);
+//    NSLog(@"%@", result11);
+//    NSLog(@"%@", result12);
+//    NSLog(@"%@", result13);
 
+//    Message *msg = [Message query].fetchFirst();
+//    
+//    NSLog(@"%@", msg);
+    
+    //动态创建表
+    //首先要创建一个基类,在根据基类创建动态类型
+    id ctype = __GetDynamicTableType(@"Message_12324883", [Message class]);
+    
+    Message *msg = __NEW(ctype);
+    msg.body = @"你好";
+    [msg save];
+    
+    FMDataTableQuery *query = nil;
+    if ([ctype respondsToSelector:@selector(query)]) {
+        query = [ctype performSelector:@selector(query)];
+    }
+    
+    NSLog(@"%@", query.fetchArray());
 }
 
 - (void)didReceiveMemoryWarning {

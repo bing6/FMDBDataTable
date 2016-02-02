@@ -22,16 +22,21 @@ NSDictionary * newField(NSString *name, NSString *type)
         __map = @{ @"T@\"NSString\"":DB_TYPE_TEXT,
                    @"T@\"NSNumber\"":DB_TYPE_NUMBER,
                    @"T@\"NSDate\"":DB_TYPE_DATE,
-                   @"T@\"NSData\"":DB_TYPE_NUMBER,
+                   @"T@\"NSData\"":DB_TYPE_TEXT,
                    @"Ti":DB_TYPE_NUMBER,
                    @"T^i":DB_TYPE_NUMBER,
                    @"Tf":DB_TYPE_NUMBER,
                    @"Tq":DB_TYPE_NUMBER,
-                   @"Td":DB_TYPE_NUMBER };
+                   @"Td":DB_TYPE_NUMBER,
+                   @"T@\"NSDictionary\"":DB_TYPE_TEXT,
+                   @"T@\"NSMutableDictionary\"":DB_TYPE_TEXT,
+                   @"T@\"NSArray\"":DB_TYPE_TEXT,
+                   @"T@\"NSMutableArray\"":DB_TYPE_TEXT,
+                   };
     });
     NSString *dbType = [__map objectForKey:type];
     if (dbType) {
-        return @{ DTS_F_OBJ_NAME:name, DTS_F_NAME:name, DTS_F_TYPE:dbType };
+        return @{ DTS_F_OBJ_NAME:name, DTS_F_OBJ_TYPE : type, DTS_F_NAME:name, DTS_F_TYPE:dbType };
     }
     return nil;
 }
