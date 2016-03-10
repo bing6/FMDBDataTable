@@ -280,9 +280,9 @@
     NSInteger limit = MAX(self.limit, 0);
     NSInteger skip  = MAX(self.skip, 0);
     if (limit > 0) {
-        [sql appendFormat:@" limit %ld", limit];
+        [sql appendFormat:@" limit %@", @(limit)];
         if (skip > 0) {
-            [sql appendFormat:@" offset %ld", skip];
+            [sql appendFormat:@" offset %@", @(skip)];
         }
     }
     return sql;
