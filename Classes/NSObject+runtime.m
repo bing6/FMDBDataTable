@@ -17,7 +17,7 @@
         return;
     }
     if (block) {
-        do {
+        while (true) {
             //获得类属性的数量
             u_int count;
             objc_property_t *ps = class_copyPropertyList(ctype, &count);
@@ -30,8 +30,10 @@
             }
             free(ps);
             ctype = [ctype superclass];
-        } while (![NSStringFromClass(ctype) isEqualToString:@"FMDataTable"]);
-        
+            if (ctype == [NSObject class]) {
+                break;
+            }
+        }
     }
 }
 

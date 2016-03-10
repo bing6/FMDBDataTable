@@ -7,27 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "FMDataTable+Query.h"
-#import "FMDataTable+KVC.h"
-#import <objc/runtime.h>
-
-@implementation Company
-
-@end
-
-@implementation Employee
-
-- (NSString *)fullName
-{
-    return [NSString stringWithFormat:@"%@.%@", self.firstName, self.lastName];
-}
-
-@end
-
-@implementation Message
-
-
-@end
+#import "DBSet.h"
 
 @interface ViewController ()
 
@@ -35,169 +15,188 @@
 
 @implementation ViewController
 
+//批量添加数据
+- (void)insertData {
+    NSMutableArray *userArray = [NSMutableArray new];
+    for (int i = 0; i < 100; i++) {
+        Users *userObjct = [Users new];
+        userObjct.userId = i + 1;
+        userObjct.nickname = [NSString stringWithFormat:@"user%d", i];
+        userObjct.sex = i % 2 == 0 ? @"女" : @"男";
+        [userArray addObject:userObjct];
+    }
+
+    //创建插入对象
+    FMDTInsertCommand *icmd = [[DBSet shared].user createInsertCommand];
+    //添加要插入的对象集合
+    [icmd addWithArray:userArray];
+    //设置添加操作是否使用replace语句
+    [icmd setRelpace:YES];
+    //执行插入操作
+    [icmd saveChangesInBackground:^{
+        NSLog(@"批量数据提交完成");
+    }];
+}
+
+//更新数据
+- (void)updateData {
+    
+    Users *userObjct = [Users new];
+
+    userObjct.userId = 1;
+    userObjct.nickname = @"小明";
+    userObjct.sex = @"男";
+    userObjct.other = @{ @"f1" : @(1), @"f2" : @"f2" };
+
+    //通过对象更新数据
+    FMDTUpdateObjectCommand *ucmd1 = [[DBSet shared].user createUpdateObjectCommand];
+
+    //添加要更新的对象
+    [ucmd1 add:userObjct];
+    //执行更新操作
+    [ucmd1 saveChangesInBackground:^{
+        NSLog(@"更新完成");
+    }];
+
+    //通过条件更新数据
+    FMDTUpdateCommand *ucmd2 = [[DBSet shared].user createUpdateCommand];
+    //设置要更新的字段与值
+    [ucmd2 fieldWithKey:@"nickname" val:@"小红"];
+    //设置更新条件
+    [ucmd2 where:@"userId" equalTo:@(2)];
+    //执行更新操作
+    [ucmd2 saveChanges];
+}
+
+//删除数据
+- (void)deleteData {
+    
+    FMDTDeleteCommand *dcmd = FMDT_DELETE([DBSet shared].user);
+    //设置条件
+    [dcmd where:@"userId" greaterThan:@"50"];
+    //执行删除操作
+    [dcmd saveChanges];
+}
+
+//查询数据
+- (void)selectData {
+    //查询数据
+    FMDTSelectCommand *cmd = [[DBSet shared].user createSelectCommand];
+
+    //单一条件查询
+    //SQL:select * from [Users] where sex = '男'
+    [cmd where:@"sex" equalTo:@"男"];
+    [cmd fetchArray];
+
+    //多条件And查询
+    //SQL:select * from [Users] where sex = '男' and nickname like '%1%'
+    [cmd where:@"sex" equalTo:@"男"];
+    [cmd where:@"nickname" containsString:@"%1%"];
+    [cmd fetchArray];
+
+    //多条件Or查询
+    //SQL:select * from [Users] where nickname like '%1%' or sex = '男'
+    [cmd where:@"nickname" containsString:@"%1%"];
+    [cmd whereOr:@"sex" equalTo:@"男"];
+    [cmd fetchArray];
+
+    //In
+    //SQL:select count(*) from Users where sex in ('女','男')
+    [cmd where:@"sex" containedIn:@[ @"女", @"男"]];
+    [cmd fetchArray];
+
+    //Not In
+    //SQL:select count(*) from Users where sex not in ('女','男')
+    [cmd where:@"sex" notContainedIn:@[ @"女", @"男"]];
+    [cmd fetchArray];
+
+    //Like
+    //SQL:select * from [Users] where nickname like '%1%'
+    [cmd where:@"nickname" containsString:@"%1%"];
+    [cmd fetchArray];
+
+    //Not Like
+    //SQL:select * from [Users] where nickname not like '%1%'
+    [cmd where:@"nickname" notContainsString:@"%1%"];
+    [cmd fetchArray];
+
+    // <
+    //SQL:select * from Users where  userId < '30'
+    [cmd where:@"userId" lessThan:@(30)];
+    [cmd fetchArray];
+
+    // <=
+    //SQL:select * from Users where  userId <= '30'
+    [cmd where:@"userId" lessThanOrEqualTo:@(30)];
+    [cmd fetchArray];
+
+    // >
+    //SQL:select * from Users where  userId > '30'
+    [cmd where:@"userId" greaterThan:@(30)];
+    [cmd fetchArray];
+
+    // >=
+    //SQL:select * from Users where  userId >= '30'
+    [cmd where:@"userId" greaterThanOrEqualTo:@(30)];
+    [cmd fetchArray];
+
+    //排序 ascending.
+    //SQL:select * from Users order by userId asc
+    [cmd orderByAscending:@"userId"];
+    [cmd fetchArray];
+
+    //排序 descending.
+    //SQL:select * from Users order by userId desc
+    [cmd orderByDescending:@"userId"];
+    [cmd fetchArray];
+
+    //获取前10条
+    //SQL:select * from Users limit 10
+    [cmd setLimit:10];
+    [cmd fetchArray];
+    
+    //分页获取数据
+    //SQL:select * from Users limit 10 offset 10
+    [cmd setLimit:10];
+    [cmd setSkip:10];
+    [cmd fetchArray];
+}
+
+- (void)dyInsertData {
+    NSMutableArray *array = [NSMutableArray new];
+    for (int i = 0; i < 100; i++) {
+        Message *mobj = [Message new];
+        mobj.mid = FMDT_UUID();
+        mobj.text = FMDT_UUID();
+        mobj.createdAt = [NSDate new];
+        [array addObject:mobj];
+    }
+    
+    //创建插入对象
+    FMDTInsertCommand *icmd = [[[DBSet shared] dynamicTable:@"message_2B8970F2F4394B7CB4C8027FB198817A"] createInsertCommand];
+    //添加要插入的对象集合
+    [icmd addWithArray:array];
+    //设置添加操作是否使用replace语句
+    [icmd setRelpace:YES];
+    //执行插入操作
+    [icmd saveChangesInBackground:^{
+        NSLog(@"批量数据提交完成");
+    }];
+
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    /*******************************************************
-//     * 全局设置
-//     *
-//     * DTM_SHARE是FMDataTableManager的一个共享实例,
-//     * 我们可以它来设置日志输出,模型的存放位置等操作,
-//     * 当然你什么都不做也是可以的。
-//     *******************************************************/
-//    
-    //打开日志输出
-    [DTM_SHARE setLogEnabled:YES];
-//
-//    //设定模型数据存储在那个库下
-//    //默认会存储在沙盒下的Library/Caches/{Bundle Identifier}.db
-//    //这时需要注意的是绑定之前,不要对模型做任何的方法调用,因为会触发initialize方法,
-//    //数据表的建立都是在这个方法内做的.
-//    //设置我们建议放到AppDelegate做去做
-//    [DTM_SHARE bindModelWithName:@"Company" dbName:@"test1"];
-//    [DTM_SHARE bindModelWithName:@"Employee" dbName:@"test2"];
-//
-//    
-//    /*******************************************************
-//     * 演示保存数据
-//     *
-//     * 模型继承FMDataTable默认有三个属性
-//     * 1.pid 用于存放唯一ID,id类型(之所以使用ID类型是考虑到网站上拿到的数据可能是INT型),默认会产生一个GUID
-//     * 2.createdAt 记录产生时间,double类型
-//     * 3,udpatedAt 记录修改时间,double类型
-//     * 
-//     * 保存对象需要调用save方法,如果记录存在就更新,没有就添加.
-//     *******************************************************/
-//    
-//    //单一记录保存
-//    Company *myCom = [Company new];
-//
-//    [myCom setPid:@(8888)];
-//    [myCom setName:@"北京清大世纪教育集团"];
-//    [myCom setAddress:@"北京市鲁谷路74号院"];
-//    [myCom save];
-//
-//    Employee *emp1 = [Employee new];
-//    
-//    [emp1 setPid:@(727)];
-//    [emp1 setFirstName:@"KeQiang"];
-//    [emp1 setLastName:@"Li"];
-//    [emp1 setAge:18];
-//    [emp1 save];
-//
-//    //批理数据保存
-//    Employee *emp2 = [Employee new];
-//    [emp2 setPid:@(800)];
-//    [emp2 setFirstName:@"JinPin"];
-//    [emp2 setLastName:@"Xi"];
-//    [emp2 setAge:22];
-//    Employee *emp3 = [Employee new];
-//    [emp3 setPid:@(810)];
-//    [emp3 setFirstName:@"QiShan"];
-//    [emp3 setLastName:@"Wang"];
-//    [emp3 setAge:20];
-//    [Employee batchSave:@[ emp2, emp3 ] complete:^(id res, NSError *err) {
-//        
-//    }];
-//
-//    //修改数据
-//    [emp2 setAge:25];
-//    [emp1 save];
-//
-//    /*******************************************************
-//     * 演示删除数据
-//     *******************************************************/
-//    
-//    //删除一条数据
-//    [emp1 destroy];
-//    //根据唯一ID删除
-//    [Employee destroyByPid:@(727)];
-//    //根据字段删除
-//    [Employee destroyWithField:@"lastName" value:@"Xi"];
-//    //自定义条件删除
-//    [Employee destroyWithWhere:@"lastName = ?" args:@[ @"Wang" ]];
-//    //删除所有数据
-//    [Employee clear];
-//    
-//    
-//    /*******************************************************
-//     * 演示查询数据
-//     *******************************************************/
-//    
-//    //返回多条数据,条件
-//    NSArray *result1 = [Employee where:@"age > ?" args:@[ @(22) ]];
-//    
-//    //返回多条数据,条件
-//    NSArray *result2 = [Employee where:@"age > ?" args:@[ @(22)] order:@"age desc" limit:nil offset:nil];
-//    
-//    //返回多条数据,条件,排序,分页
-//    NSArray *result3 = [Employee where:@"age > ?" args:@[ @(22)] order:@"age desc" limit:@(20) offset:@1];
-//    
-//    //返回多条数据,排序
-//    NSArray *result4 = [Employee order:@"age desc"];
-//    
-//    //返回多条数据,排序,分页
-//    NSArray *result5 = [Employee order:@"age desc" limit:@20 offset:@1];
-//    
-//    //返回一条数据
-//    Employee *result6 = [Employee first:@"firstName = ?" args:@[ @"KeQiang" ]];
-//    
-//    //返回一条数据,根据主键ID查询获取数据
-//    Employee *result7 = [Employee findByPid:@727];
-//
-//    //返回多条数据,根据字段值获取
-//    NSArray *result8 = [Employee findEqualWithField:@"firstName" value:@"KeQiang"];
-//    
-//    //返回多条数据,根据字段值取返获取
-//    NSArray *result9 = [Employee findNotEqualWithField:@"firstName" value:@"KeQiang"];
-//    
-//    //返回多条数据,根据字段值模糊匹配
-//    NSArray *result10 = [Employee findLikeWithField:@"firstName" value:@"Ke"];
-//    
-//    
-//    /*******************************************************
-//     * 演示链式查询
-//     *******************************************************/
-//
-//    //返回多条数据,条件
-//    NSArray *result11 = [Employee query].where(@"firstName", @"KeQiang").whereOr(@"lastName", @"Xi").fetchArray();
-//    //返回多条数据,排序
-//    NSArray *result12 = [Employee query].orderByAsc(@"lastName").fetchArray();
-//    //返回数据条数
-//    NSNumber *result13 = [Employee query].fetchCount();
-////
-////    NSLog(@"%@", result1);
-////    NSLog(@"%@", result2);
-////    NSLog(@"%@", result3);
-////    NSLog(@"%@", result4);
-////    NSLog(@"%@", result5);
-////    NSLog(@"%@", result6);
-////    NSLog(@"%@", result7);
-////    NSLog(@"%@", result8);
-////    NSLog(@"%@", result9);
-////    NSLog(@"%@", result10);
-//    NSLog(@"%@", result11);
-//    NSLog(@"%@", result12);
-//    NSLog(@"%@", result13);
-
-//    Message *msg = [Message query].fetchFirst();
-//    
-//    NSLog(@"%@", msg);
+    NSLog(@"%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]);
     
-    //动态创建表
-    //首先要创建一个基类,在根据基类创建动态类型
-    id ctype = __GetDynamicTableType(@"Message_12324883", [Message class]);
+    [self insertData];  //插入数据
+    [self updateData];  //更新数据
+    [self deleteData];  //删除数据
+    [self selectData];  //查询数据
     
-    Message *msg = __NEW(ctype);
-    msg.body = @"你好";
-    [msg save];
+    [self dyInsertData]; //向动态表里添加数据
     
-    FMDataTableQuery *query = nil;
-    if ([ctype respondsToSelector:@selector(query)]) {
-        query = [ctype performSelector:@selector(query)];
-    }
-    
-    NSLog(@"%@", query.fetchArray());
 }
 
 - (void)didReceiveMemoryWarning {

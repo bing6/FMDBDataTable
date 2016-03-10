@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "FMDBDataTable"
-  s.version      = "0.7.3"
+  s.version      = "2.0.0"
   s.summary      = "基于FMDB的一个ORM解决方案"
 
   s.description  = <<-DESC
@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/bing6/FMDataTable.git", :tag => "0.7.3" }
+  s.source       = { :git => "https://github.com/bing6/FMDataTable.git", :tag => "2.0.0" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
