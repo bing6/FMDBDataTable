@@ -183,5 +183,5 @@
 
 # Installation
 
-pod 'FMDBDataTable', '~> 2.0.0'
+pod 'FMDBDataTable', '~> 2.0.2'
 
