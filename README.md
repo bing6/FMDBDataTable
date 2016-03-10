@@ -67,23 +67,6 @@
     [icmd saveChangesInBackground:^{
         NSLog(@"批量数据提交完成");
     }];
-
-#批量保存数据
-
-    Employee *emp2 = [Employee new];
-    [emp2 setPid:@(800)];
-    [emp2 setFirstName:@"JinPin"];
-    [emp2 setLastName:@"Xi"];
-    [emp2 setAge:22];
-    Employee *emp3 = [Employee new];
-    [emp3 setPid:@(810)];
-    [emp3 setFirstName:@"QiShan"];
-    [emp3 setLastName:@"Wang"];
-    [emp3 setAge:20];
-    
-    [Employee batchSave:@[ emp2, emp3 ] complete:^(id res, NSError *err) {
-        
-    }];
     
 #更新数据
 
