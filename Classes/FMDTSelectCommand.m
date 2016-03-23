@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSMutableArray *whereArray;
 @property (nonatomic, strong) NSMutableArray *orderArray;
+@property (nonatomic, strong) NSMutableArray *groupArray;
 
 @end
 
@@ -24,6 +25,7 @@
     if (self) {
         self.whereArray = [NSMutableArray new];
         self.orderArray = [NSMutableArray new];
+        self.groupArray = [NSMutableArray new];
     }
     return self;
 }
@@ -146,6 +148,11 @@
     return self;
 }
 
+- (FMDTSelectCommand *)groupBy:(NSString *)key {
+    [self.groupArray addObject:key];
+    return self;
+}
+
 - (NSArray *)fetchArray {
     return [self fetchArrayWithDb:nil];
 }
@@ -256,12 +263,59 @@
     }
 }
 
+- (NSArray *)fetchArrayWithFields:(NSArray *)fields {
+    
+    return [self fetchArrayWithFields:fields db:nil];
+}
+
+- (void)fetchArrayInBackgroundWithFields:(NSArray *)fields callback:(FMDT_CALLBACK_RESULT_ARRAY)callback {
+    if (callback) {
+        FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
+        [queue inDatabase:^(FMDatabase *db) {
+            callback([self fetchArrayWithFields:fields db:db]);
+        }];
+        [queue close];
+    }
+}
+
+- (NSArray *)fetchArrayWithFields:(NSArray *)fields db:(FMDatabase *)db {
+    if (fields == nil || fields.count == 0) {
+        return nil;
+    }
+    NSString *sql = [self runSql:[fields componentsJoinedByString:@","]];
+    
+    if (db == nil) {
+        db = [FMDatabase databaseWithPath:self.schema.storage];
+    }
+    
+    [db open];
+    
+    FMResultSet *set = [db executeQuery:sql];
+    NSMutableArray *results = [NSMutableArray new];
+    
+    while ([set next]) {
+        [results addObject:[set resultDictionary]];
+    }
+    
+    [db close];
+    [self removeCacheAllObject];
+    
+    return results;
+}
+
 - (void)removeCacheAllObject {
     [self.whereArray removeAllObjects];
     [self.orderArray removeAllObjects];
+    [self.groupArray removeAllObjects];
+    self.limit = 0;
+    self.skip = 0;
 }
 
 - (NSString *)runSql:(NSString *)resultField {
+    
+    if (self.groupArray.count > 0) {
+        resultField = [self.groupArray componentsJoinedByString:@","];
+    }
     
     NSMutableString *sql = [[NSMutableString alloc] initWithFormat:@"select %@ from [%@]", resultField, self.schema.tableName];
     if (self.whereArray.count > 0) {
@@ -276,6 +330,9 @@
     if (self.orderArray.count > 0) {
         NSString *str = [self.orderArray componentsJoinedByString:@","];
         [sql appendFormat:@" order by %@", str];
+    }
+    if (self.groupArray.count > 0) {
+        [sql appendFormat:@" group by %@", [self.groupArray componentsJoinedByString:@","]];
     }
     NSInteger limit = MAX(self.limit, 0);
     NSInteger skip  = MAX(self.skip, 0);

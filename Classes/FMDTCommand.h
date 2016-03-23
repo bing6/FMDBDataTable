@@ -11,6 +11,12 @@
 #import "FMDTSchema.h"
 #import "FMDTObject.h"
 
+typedef void(^FMDT_CALLBACK_RESULT_OBJECT)(id result);
+typedef void(^FMDT_CALLBACK_RESULT_ARRAY)(NSArray *result);
+typedef void(^FMDT_CALLBACK_RESULT_INT)(NSInteger result);
+typedef void(^FMDT_CALLBACK_RESULT_NOT)();
+
+
 @protocol FMDTCommand <NSObject>
 
 @property (nonatomic, weak, readonly) FMDTSchemaTable *schema;

@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "FMDTCommand.h"
 
+#define FMDT_SELECT_MAX(field) max(field) as field
+#define FMDT_SELECT_MIN(field) min(field) as field
+#define FMDT_SELECT_SUM(field) sum(field) as field
+#define FMDT_SELECT_AVG(field) avg(field) as field
+
 @interface FMDTSelectCommand : NSObject<FMDTCommand>
 
 @property (nonatomic, assign) NSInteger limit;
@@ -39,6 +44,8 @@
 - (FMDTSelectCommand *)orderByDescending:(NSString *)key;
 - (FMDTSelectCommand *)orderByAscending:(NSString *)key;
 
+- (FMDTSelectCommand *)groupBy:(NSString *)key;
+
 /**
  *  执行查询
  *
@@ -51,7 +58,7 @@
  *
  *  @param callback 回调方法
  */
-- (void)fetchArrayInBackground:(void(^)(NSArray *result))callback;
+- (void)fetchArrayInBackground:(FMDT_CALLBACK_RESULT_ARRAY)callback;
 
 /**
  *  执行查询
@@ -65,7 +72,8 @@
  *
  *  @param callback 回调方法
  */
-- (void)fetchObjectInBackground:(void(^)(id result))callback;
+- (void)fetchObjectInBackground:(FMDT_CALLBACK_RESULT_OBJECT)callback;
+
 
 /**
  *  执行查询
@@ -79,6 +87,23 @@
  *
  *  @param callback 回调方法
  */
-- (void)fetchCountInBackground:(void(^)(NSInteger count))callback;
+- (void)fetchCountInBackground:(FMDT_CALLBACK_RESULT_INT)callback;
+
+/**
+ *  执行查询,自定义返回字段
+ *
+ *  @param fields 返回字段
+ *
+ *  @return NSArray
+ */
+- (NSArray *)fetchArrayWithFields:(NSArray *)fields;
+
+/**
+ *  执行查询,自定义返回字段
+ *
+ *  @param fields   返回字段
+ *  @param callback 回调方法
+ */
+- (void)fetchArrayInBackgroundWithFields:(NSArray *)fields callback:(FMDT_CALLBACK_RESULT_ARRAY)callback;
 
 @end

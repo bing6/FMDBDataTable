@@ -160,6 +160,11 @@
     [cmd setLimit:10];
     [cmd setSkip:10];
     [cmd fetchArray];
+    
+    [cmd groupBy:@"sex"];
+    [cmd fetchArrayInBackground:^(NSArray *result) {
+        NSLog(@"%@", result);
+    }];
 }
 
 - (void)dyInsertData {
@@ -190,12 +195,12 @@
     
     NSLog(@"%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]);
     
-    [self insertData];  //插入数据
-    [self updateData];  //更新数据
-    [self deleteData];  //删除数据
+//    [self insertData];  //插入数据
+//    [self updateData];  //更新数据
+//    [self deleteData];  //删除数据
     [self selectData];  //查询数据
     
-    [self dyInsertData]; //向动态表里添加数据
+//    [self dyInsertData]; //向动态表里添加数据
     
 }
 
