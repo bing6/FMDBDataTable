@@ -198,7 +198,7 @@
 //    [self insertData];  //插入数据
 //    [self updateData];  //更新数据
 //    [self deleteData];  //删除数据
-    [self selectData];  //查询数据
+//    [self selectData];  //查询数据
     
 //    [self dyInsertData]; //向动态表里添加数据
     

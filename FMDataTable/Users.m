@@ -11,7 +11,7 @@
 @implementation Users
 
 + (NSString *)primaryKeyFieldName {
-    return @"userId";
+    return @"userId,nickname";
 }
 
 @end

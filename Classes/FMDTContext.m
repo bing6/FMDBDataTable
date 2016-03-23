@@ -78,13 +78,29 @@
     Class cls = NSClassFromString(dts.className);
     NSString *pk = [(id)cls performSelector:@selector(primaryKeyFieldName) withObject:nil];
     
-    for (FMDTSchemaField *entry in dts.fields) {
-        if (pk && [entry.objName isEqualToString:pk]) {
-            [text appendFormat:@"[%@] %@ not null unique,", entry.name, entry.type];
-        } else {
+    if (pk == nil) {
+        for (FMDTSchemaField *entry in dts.fields) {
             [text appendFormat:@"[%@] %@,", entry.name, entry.type];
         }
+    } else {
+        NSArray *pks = [pk componentsSeparatedByString:@","];
+        
+        if (pks.count == 1) {
+            for (FMDTSchemaField *entry in dts.fields) {
+                if ([entry.objName isEqualToString:pk]) {
+                    [text appendFormat:@"[%@] %@ PRIMARY KEY,", entry.name, entry.type];
+                } else {
+                    [text appendFormat:@"[%@] %@,", entry.name, entry.type];
+                }
+            }
+        } else {
+            for (FMDTSchemaField *entry in dts.fields) {
+                [text appendFormat:@"[%@] %@,", entry.name, entry.type];
+            }
+            [text appendFormat:@"PRIMARY KEY(%@),", pk];
+        }
     }
+    
     [text deleteCharactersInRange:NSMakeRange(text.length - 1, 1)];
     [text appendString:@")"];
     return text;
