@@ -169,6 +169,9 @@
             [self.whereArray removeAllObjects];
         }];
         [queue close];
+        if (callback) {
+            callback();
+        }
     }
 }
 
