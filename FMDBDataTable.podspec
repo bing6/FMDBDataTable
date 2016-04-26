@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/bing6/FMDataTable.git", :tag => "2.1.0" }
+  s.source       = { :git => "https://github.com/bing6/FMDataTable.git", :tag => "2.1.1" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
