@@ -76,11 +76,11 @@
             *rollback = YES;
         }
         
+        [self.dataArray removeAllObjects];
+        
         if (complete) {
             complete();
         }
-        
-        [self.dataArray removeAllObjects];
     }];
 }
 

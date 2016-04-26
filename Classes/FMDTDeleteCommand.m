@@ -167,11 +167,9 @@
         [queue inDatabase:^(FMDatabase *db) {
             [db executeUpdate:[self runSql]];
             [self.whereArray removeAllObjects];
+            callback();
         }];
         [queue close];
-        if (callback) {
-            callback();
-        }
     }
 }
 

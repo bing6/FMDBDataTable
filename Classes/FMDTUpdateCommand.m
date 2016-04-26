@@ -165,6 +165,7 @@
             [db executeUpdate:[self runSql] withParameterDictionary:self.dataDict];
             [self.whereArray removeAllObjects];
             [self.dataDict removeAllObjects];
+            callback();
         }];
         [queue close];
     }
