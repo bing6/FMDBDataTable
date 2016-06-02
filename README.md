@@ -1,4 +1,4 @@
-# 描述
+# FMDBDataTable
 
     这是一个简易的ORM工具,只需要几步就可以完成对单表的CRUD操作.
     
@@ -183,5 +183,5 @@
 
 # Installation
 
-pod 'FMDBDataTable', '~> 2.0.2'
+pod 'FMDBDataTable'
 
