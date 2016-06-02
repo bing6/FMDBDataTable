@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "FMDBDataTable"
-  s.version      = "2.1.1"
+  s.version      = "2.1.2"
   s.summary      = "基于FMDB的一个ORM解决方案"
 
   s.description  = <<-DESC
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
                    * Finally, don't worry about the indent, CocoaPods strips it!
                    DESC
 
-  s.homepage     = "https://github.com/bing6/FMDataTable"
+  s.homepage     = "https://github.com/bing6/FMDBDataTable"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/bing6/FMDataTable.git", :tag => "2.1.1" }
+  s.source       = { :git => "https://github.com/bing6/FMDBDataTable.git", :tag => "2.1.2" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #

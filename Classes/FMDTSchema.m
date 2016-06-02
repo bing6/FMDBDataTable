@@ -79,16 +79,28 @@ NSDictionary * FMDTNewField(NSString *name, NSString *type)
         Class cls = NSClassFromString(self.className);
         NSString *pk = [(id)cls performSelector:@selector(primaryKeyFieldName) withObject:nil];
         NSAssert(pk, @"必须指定主键字段");
-        
+        NSMutableString *where = [NSMutableString stringWithString:@"where "];
+        NSArray *tmp = [pk componentsSeparatedByString:@","];
+        if (tmp.count > 1) {
+            for (NSString *entry in tmp) {
+                [where appendFormat:@"[%@]=:%@ and ", entry, entry];
+            }
+            [where deleteCharactersInRange:NSMakeRange(where.length - 5, 5)];
+        } else {
+            [where appendFormat:@"[%@]=:%@", pk, pk];
+        }
         NSMutableArray * keys = [NSMutableArray arrayWithCapacity:self.fields.count];
         for (int i = 0; i < self.fields.count; i++) {
             NSString *fname = [[self.fields objectAtIndex:i] name];
-            if ([fname isEqualToString:pk] == NO) {
+            if ((int)[pk rangeOfString:fname].location < 0) {
                 [keys addObject:[NSString stringWithFormat:@"[%@]=:%@", fname, fname]];
             }
+//            if ([fname isEqualToString:pk] == NO) {
+//                [keys addObject:[NSString stringWithFormat:@"[%@]=:%@", fname, fname]];
+//            }
         }
         NSString * key = [keys componentsJoinedByString:@","];
-        _statementUpdate = [NSString stringWithFormat:@"update [%@] set %@ where [%@]=:%@", self.tableName, key, pk, pk];
+        _statementUpdate = [NSString stringWithFormat:@"update [%@] set %@ %@", self.tableName, key, where];
     }
     return _statementUpdate;
 }

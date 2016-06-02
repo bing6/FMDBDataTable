@@ -61,7 +61,7 @@
     //通过条件更新数据
     FMDTUpdateCommand *ucmd2 = [[DBSet shared].user createUpdateCommand];
     //设置要更新的字段与值
-    [ucmd2 fieldWithKey:@"nickname" val:@"小红"];
+    [ucmd2 fieldWithKey:@"sex" val:@"女"];
     //设置更新条件
     [ucmd2 where:@"userId" equalTo:@(2)];
     //执行更新操作
@@ -196,10 +196,10 @@
     NSLog(@"%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]);
     
 //    [self insertData];  //插入数据
-//    [self updateData];  //更新数据
+    [self updateData];  //更新数据
 //    [self deleteData];  //删除数据
 //    [self selectData];  //查询数据
-    
+//    
 //    [self dyInsertData]; //向动态表里添加数据
     
 }

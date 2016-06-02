@@ -82,6 +82,7 @@
 		3765CCBF1C8ED00300CB32B2 /* FMDTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDTManager.m; sourceTree = "<group>"; };
 		37B305EC1C910B510079B2B1 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		37B305ED1C910B510079B2B1 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		37FC779E1CFFD23F009F7FA1 /* FMDBDataTable.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FMDBDataTable.podspec; sourceTree = "<group>"; };
 		B248441247E193317B6F9625 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		DAAD600BEDF629331279BE95 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,6 +135,7 @@
 		371FF0041B93E0DD001D59BB = {
 			isa = PBXGroup;
 			children = (
+				37FC779E1CFFD23F009F7FA1 /* FMDBDataTable.podspec */,
 				371FF0491B93F3C4001D59BB /* Classes */,
 				371FF00F1B93E0DD001D59BB /* FMDataTable */,
 				371FF0291B93E0DE001D59BB /* FMDataTableTests */,
