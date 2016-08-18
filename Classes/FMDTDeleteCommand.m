@@ -162,15 +162,17 @@
 
 - (void)saveChangesInBackground:(void(^)())callback {
     
-    if (callback) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
             [db executeUpdate:[self runSql]];
             [self.whereArray removeAllObjects];
-            callback();
+            if (callback) {
+                callback();
+            }
         }];
         [queue close];
-    }
+    });
 }
 
 @end

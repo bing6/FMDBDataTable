@@ -195,8 +195,8 @@
     
     NSLog(@"%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]);
     
-//    [self insertData];  //插入数据
-    [self updateData];  //更新数据
+    [self insertData];  //插入数据
+//    [self updateData];  //更新数据
 //    [self deleteData];  //删除数据
 //    [self selectData];  //查询数据
 //    

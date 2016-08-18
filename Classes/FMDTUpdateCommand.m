@@ -159,7 +159,10 @@
 
 - (void)saveChangesInBackground:(void (^)())callback {
     
-    if (self.dataDict.count > 0 && callback) {
+    if (self.dataDict.count == 0) {
+        return;
+    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
             [db executeUpdate:[self runSql] withParameterDictionary:self.dataDict];
@@ -168,7 +171,7 @@
             callback();
         }];
         [queue close];
-    }
+    });
 }
 
 - (NSString *)runSql {

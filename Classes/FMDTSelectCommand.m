@@ -204,13 +204,15 @@
 
 - (void)fetchArrayInBackground:(void (^)(NSArray *))callback {
     
-    if (callback) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
-            callback([self fetchArrayWithDb:db]);
+            if (callback) {
+                callback([self fetchArrayWithDb:db]);
+            }
         }];
         [queue close];
-    }
+    });
 }
 
 - (id)fetchObject {
@@ -218,13 +220,17 @@
 }
 
 - (void)fetchObjectInBackground:(void (^)(id))callback {
-    if (callback) {
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
-            callback([[self fetchArrayWithDb:db] firstObject]);
+            if (callback) {
+                callback([[self fetchArrayWithDb:db] firstObject]);
+            }
         }];
         [queue close];
-    }
+    });
+    
 }
 
 - (NSInteger)fetchCount {
@@ -253,14 +259,16 @@
 }
 
 - (void)fetchCountInBackground:(void (^)(NSInteger))callback {
-    if (callback) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
             NSInteger count = [self fetchCountWithDb:db];
-            callback(count);
+            if (callback) {
+                callback(count);
+            }
         }];
         [queue close];
-    }
+    });
 }
 
 - (NSArray *)fetchArrayWithFields:(NSArray *)fields {
@@ -269,13 +277,15 @@
 }
 
 - (void)fetchArrayInBackgroundWithFields:(NSArray *)fields callback:(FMDT_CALLBACK_RESULT_ARRAY)callback {
-    if (callback) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
         [queue inDatabase:^(FMDatabase *db) {
-            callback([self fetchArrayWithFields:fields db:db]);
+            if (callback) {
+                callback([self fetchArrayWithFields:fields db:db]);
+            }
         }];
         [queue close];
-    }
+    });
 }
 
 - (NSArray *)fetchArrayWithFields:(NSArray *)fields db:(FMDatabase *)db {

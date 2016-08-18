@@ -57,31 +57,33 @@
 
 - (void)saveChangesInBackground:(void (^)())complete {
     
-    FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
-    
-    [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
-        @try {
-            for (FMDTObject *entry in self.dataArray) {
-                NSArray *array = [self getObjectValues:entry];
-                NSString *statement = nil;
-                if (self.relpace) {
-                    statement = self.schema.statementReplace;
-                } else {
-                    statement = self.schema.statementInsert;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
+        [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+            @try {
+                for (FMDTObject *entry in self.dataArray) {
+                    NSArray *array = [self getObjectValues:entry];
+                    NSString *statement = nil;
+                    if (self.relpace) {
+                        statement = self.schema.statementReplace;
+                    } else {
+                        statement = self.schema.statementInsert;
+                    }
+                    [db executeUpdate:statement withArgumentsInArray:array];
                 }
-                [db executeUpdate:statement withArgumentsInArray:array];
             }
-        }
-        @catch (NSException *exception) {
-            *rollback = YES;
-        }
-        
-        [self.dataArray removeAllObjects];
-        
-        if (complete) {
-            complete();
-        }
-    }];
+            @catch (NSException *exception) {
+                *rollback = YES;
+            }
+            
+            [self.dataArray removeAllObjects];
+            
+            if (complete) {
+                complete();
+            }
+        }];
+    });
+    
 }
 
 - (NSArray *)getObjectValues:(FMDTObject *)obj {

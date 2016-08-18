@@ -61,23 +61,25 @@
         return;
     }
     
-    FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
-    [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
-        @try {
-            for (FMDTObject *entry in self.dataArray) {
-                [db executeUpdate:self.schema.statementUpdate withParameterDictionary:[self getUpdateData:entry]];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:self.schema.storage];
+        [queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+            @try {
+                for (FMDTObject *entry in self.dataArray) {
+                    [db executeUpdate:self.schema.statementUpdate withParameterDictionary:[self getUpdateData:entry]];
+                }
             }
-        }
-        @catch (NSException *exception) {
-            *rollback = YES;
-        }
-        
-        [self.dataArray removeAllObjects];
-        
-        if (complete) {
-            complete();
-        }
-    }];
+            @catch (NSException *exception) {
+                *rollback = YES;
+            }
+            
+            [self.dataArray removeAllObjects];
+            
+            if (complete) {
+                complete();
+            }
+        }];
+    });
 }
 
 - (NSDictionary *)getUpdateData:(FMDTObject *)obj {
