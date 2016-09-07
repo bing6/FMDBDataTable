@@ -180,6 +180,9 @@
     for (NSString *key in self.dataDict.allKeys) {
         [sql appendFormat:@" %@=:%@,", key, key];
     }
+    if (self.dataDict.count > 0) {
+        [sql deleteCharactersInRange:NSMakeRange(sql.length-1, 1)];
+    }
     if (self.whereArray.count > 0) {
         NSString *str = [self.whereArray componentsJoinedByString:@" "];
         if ([str hasPrefix:@"and"]) {
