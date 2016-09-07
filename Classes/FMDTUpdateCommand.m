@@ -178,7 +178,7 @@
     NSMutableString *sql = [[NSMutableString alloc] initWithFormat:@"update [%@] set", self.schema.tableName];
     
     for (NSString *key in self.dataDict.allKeys) {
-        [sql appendFormat:@" %@=:%@", key, key];
+        [sql appendFormat:@" %@=:%@,", key, key];
     }
     if (self.whereArray.count > 0) {
         NSString *str = [self.whereArray componentsJoinedByString:@" "];
