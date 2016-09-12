@@ -88,6 +88,16 @@
     return self;
 }
 
+- (FMDTSelectCommand *)whereIsNull:(NSString *)key {
+    [self.whereArray addObject:[NSString stringWithFormat:@"and %@ is null", key]];
+    return self;
+}
+
+- (FMDTSelectCommand *)whereIsNotNull:(NSString *)key {
+    [self.whereArray addObject:[NSString stringWithFormat:@"and %@ is not null", key]];
+    return self;
+}
+
 - (FMDTSelectCommand *)whereOr:(NSString *)key equalTo:(id)object {
     [self.whereArray addObject:[NSString stringWithFormat:@"or %@ = '%@'", key, object]];
     return self;
@@ -135,6 +145,16 @@
 
 - (FMDTSelectCommand *)whereOr:(NSString *)key notContainsString:(NSString *)string {
     [self.whereArray addObject:[NSString stringWithFormat:@"or %@ not like '%@'", key, string]];
+    return self;
+}
+
+- (FMDTSelectCommand *)whereOrIsNull:(NSString *)key {
+    [self.whereArray addObject:[NSString stringWithFormat:@"or %@ is null", key]];
+    return self;
+}
+
+- (FMDTSelectCommand *)whereOrIsNotNull:(NSString *)key {
+    [self.whereArray addObject:[NSString stringWithFormat:@"or %@ is not null", key]];
     return self;
 }
 
