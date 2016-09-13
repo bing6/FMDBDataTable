@@ -29,6 +29,8 @@
 - (FMDTSelectCommand *)where:(NSString *)key notContainedIn:(NSArray *)array;
 - (FMDTSelectCommand *)where:(NSString *)key containsString:(NSString *)string;
 - (FMDTSelectCommand *)where:(NSString *)key notContainsString:(NSString *)string;
+- (FMDTSelectCommand *)whereIsNull:(NSString *)key;
+- (FMDTSelectCommand *)whereIsNotNull:(NSString *)key;
 
 - (FMDTSelectCommand *)whereOr:(NSString *)key equalTo:(id)object;
 - (FMDTSelectCommand *)whereOr:(NSString *)key notEqualTo:(id)object;
@@ -40,6 +42,8 @@
 - (FMDTSelectCommand *)whereOr:(NSString *)key notContainedIn:(NSArray *)array;
 - (FMDTSelectCommand *)whereOr:(NSString *)key containsString:(NSString *)string;
 - (FMDTSelectCommand *)whereOr:(NSString *)key notContainsString:(NSString *)string;
+- (FMDTSelectCommand *)whereOrIsNull:(NSString *)key;
+- (FMDTSelectCommand *)whereOrIsNotNull:(NSString *)key;
 
 - (FMDTSelectCommand *)orderByDescending:(NSString *)key;
 - (FMDTSelectCommand *)orderByAscending:(NSString *)key;
