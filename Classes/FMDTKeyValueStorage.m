@@ -13,7 +13,6 @@
 
 @property (nonatomic, strong) NSString *m_key;
 @property (nonatomic, strong) NSDictionary *m_value;
-//@property (nonatomic, strong) NSString *m_type;
 
 @end
 
@@ -43,28 +42,9 @@
 }
 
 - (FMDTContext *)kv {
-//    NSMutableDictionary *s;
-//    [s set]
     NSString *path = [NSString stringWithFormat:@"%@/kv.db", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
     return [self cacheWithClass:[FMDTKeyValueObject class] dbPath:path];
 }
-
-//- (void)set:(NSString *)key valueForString:(NSString *)value {
-//
-//}
-//
-//- (void)set:(NSString *)key valueForNumber:(NSNumber *)value {
-//
-//}
-//
-//- (void)set:(NSString *)key valueForDictionary:(NSDictionary *)value {
-//
-//}
-//
-//- (void)set:(NSString *)key valueForArray:(NSArray *)value {
-//    
-//}
-//
 
 - (void)set:(NSString *)key value:(id)value {
     if (key == nil || value == nil) {
