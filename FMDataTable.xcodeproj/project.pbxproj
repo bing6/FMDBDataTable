@@ -19,6 +19,7 @@
 		37477D521C8FC1E500924741 /* FMDTUpdateObjectCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 37477D511C8FC1E500924741 /* FMDTUpdateObjectCommand.m */; };
 		37477D551C8FE14C00924741 /* Users.m in Sources */ = {isa = PBXBuildFile; fileRef = 37477D541C8FE14C00924741 /* Users.m */; };
 		37477D581C8FE1E600924741 /* DBSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 37477D571C8FE1E600924741 /* DBSet.m */; };
+		374AEB451E5D4DAA00828FDA /* FMDTKeyValueStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 374AEB441E5D4DAA00828FDA /* FMDTKeyValueStorage.m */; };
 		3765CCA81C8E755100CB32B2 /* FMDTContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3765CCA71C8E755100CB32B2 /* FMDTContext.m */; };
 		3765CCAB1C8E755D00CB32B2 /* FMDTSchema.m in Sources */ = {isa = PBXBuildFile; fileRef = 3765CCAA1C8E755D00CB32B2 /* FMDTSchema.m */; };
 		3765CCAE1C8E756800CB32B2 /* FMDTObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3765CCAD1C8E756800CB32B2 /* FMDTObject.m */; };
@@ -64,6 +65,9 @@
 		37477D541C8FE14C00924741 /* Users.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Users.m; sourceTree = "<group>"; };
 		37477D561C8FE1E600924741 /* DBSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBSet.h; sourceTree = "<group>"; };
 		37477D571C8FE1E600924741 /* DBSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBSet.m; sourceTree = "<group>"; };
+		374AEB431E5D4DAA00828FDA /* FMDTKeyValueStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDTKeyValueStorage.h; sourceTree = "<group>"; };
+		374AEB441E5D4DAA00828FDA /* FMDTKeyValueStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDTKeyValueStorage.m; sourceTree = "<group>"; };
+		374AEB461E5D5FD200828FDA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3765CCA61C8E755100CB32B2 /* FMDTContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDTContext.h; sourceTree = "<group>"; };
 		3765CCA71C8E755100CB32B2 /* FMDTContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDTContext.m; sourceTree = "<group>"; };
 		3765CCA91C8E755D00CB32B2 /* FMDTSchema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDTSchema.h; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 		371FF0041B93E0DD001D59BB = {
 			isa = PBXGroup;
 			children = (
+				374AEB461E5D5FD200828FDA /* README.md */,
 				37FC779E1CFFD23F009F7FA1 /* FMDBDataTable.podspec */,
 				371FF0491B93F3C4001D59BB /* Classes */,
 				371FF00F1B93E0DD001D59BB /* FMDataTable */,
@@ -219,6 +224,8 @@
 				3765CCB91C8E77A300CB32B2 /* FMDTDeleteCommand.m */,
 				3765CCBE1C8ED00300CB32B2 /* FMDTManager.h */,
 				3765CCBF1C8ED00300CB32B2 /* FMDTManager.m */,
+				374AEB431E5D4DAA00828FDA /* FMDTKeyValueStorage.h */,
+				374AEB441E5D4DAA00828FDA /* FMDTKeyValueStorage.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -396,6 +403,7 @@
 				3765CCB71C8E777300CB32B2 /* FMDTUpdateCommand.m in Sources */,
 				3765CCB41C8E774400CB32B2 /* FMDTInsertCommand.m in Sources */,
 				3765CCBA1C8E77A300CB32B2 /* FMDTDeleteCommand.m in Sources */,
+				374AEB451E5D4DAA00828FDA /* FMDTKeyValueStorage.m in Sources */,
 				37B305EE1C910B510079B2B1 /* Message.m in Sources */,
 				3765CCB11C8E757600CB32B2 /* FMDTSelectCommand.m in Sources */,
 				3765CCC01C8ED00300CB32B2 /* FMDTManager.m in Sources */,
@@ -529,6 +537,7 @@
 			baseConfigurationReference = DAAD600BEDF629331279BE95 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FMDataTable/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -541,6 +550,7 @@
 			baseConfigurationReference = B248441247E193317B6F9625 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FMDataTable/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

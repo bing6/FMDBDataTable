@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "DBSet.h"
+#import "FMDTKeyValueStorage.h"
 
 @interface ViewController ()
 
@@ -190,18 +191,45 @@
 
 }
 
+- (void)testKeyValue {
+    
+    //字符串存储
+    [STORE set:@"a1" value:@"我是字符串"];
+    //数值存储
+    [STORE set:@"a2" value:@(1)];
+    //字典存储
+    [STORE set:@"a3" value:@{@"test1": @"abc", @"test2": @"abc222"}];
+    //数组存储
+    [STORE set:@"a4" value:@[@(1),@(2),@(3),@(4)]];
+    
+    //读取字符串
+    NSLog(@"%@", [STORE stringForKey:@"a1"]);
+    //读取数值
+    NSLog(@"%@", [STORE stringForKey:@"a2"]);
+    //读取字典
+    NSLog(@"%@", [STORE stringForKey:@"a3"]);
+    //读取数组
+    NSLog(@"%@", [STORE stringForKey:@"a4"]);
+    
+    //删除键值
+    [STORE removeForKey:@"a1"];
+    //清除所有的键值
+    [STORE removeAll];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     NSLog(@"%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]);
     
-    [self insertData];  //插入数据
+//    [self insertData];  //插入数据
 //    [self updateData];  //更新数据
 //    [self deleteData];  //删除数据
 //    [self selectData];  //查询数据
 //    
 //    [self dyInsertData]; //向动态表里添加数据
     
+    [self testKeyValue];
 }
 
 - (void)didReceiveMemoryWarning {

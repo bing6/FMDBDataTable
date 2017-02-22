@@ -1,7 +1,8 @@
 # FMDBDataTable
 
     这是一个简易的ORM工具,只需要几步就可以完成对单表的CRUD操作.
-    
+
+
 # 建立模型
 
     @interface Users : FMDTObject
@@ -180,6 +181,31 @@
     [cmd setLimit:10];
     [cmd setSkip:10];
     [cmd fetchArray];
+
+# 基于KeyValue的存储功能
+
+    //字符串存储
+    [STORE set:@"a1" value:@"我是字符串"];
+    //数值存储
+    [STORE set:@"a2" value:@(1)];
+    //字典存储
+    [STORE set:@"a3" value:@{@"test1": @"abc", @"test2": @"abc222"}];
+    //数组存储
+    [STORE set:@"a4" value:@[@(1),@(2),@(3),@(4)]];
+
+    //读取字符串
+    NSLog(@"%@", [STORE stringForKey:@"a1"]);
+    //读取数值
+    NSLog(@"%@", [STORE stringForKey:@"a2"]);
+    //读取字典
+    NSLog(@"%@", [STORE stringForKey:@"a3"]);
+    //读取数组
+    NSLog(@"%@", [STORE stringForKey:@"a4"]);
+
+    //删除键值
+    [STORE removeForKey:@"a1"];
+    //清除所有的键值
+    [STORE removeAll];
 
 # Installation
 
