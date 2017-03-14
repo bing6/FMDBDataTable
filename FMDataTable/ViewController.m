@@ -205,11 +205,11 @@
     //读取字符串
     NSLog(@"%@", [STORE stringForKey:@"a1"]);
     //读取数值
-    NSLog(@"%@", [STORE stringForKey:@"a2"]);
+    NSLog(@"%@", [STORE numberForKey:@"a2"]);
     //读取字典
-    NSLog(@"%@", [STORE stringForKey:@"a3"]);
+    NSLog(@"%@", [STORE dictionaryForKey:@"a3"]);
     //读取数组
-    NSLog(@"%@", [STORE stringForKey:@"a4"]);
+    NSLog(@"%@", [STORE arrayForKey:@"a4"]);
     
     //删除键值
     [STORE removeForKey:@"a1"];
