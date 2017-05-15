@@ -9,13 +9,6 @@
 #import "FMDTKeyValueStorage.h"
 #import "FMDTObject.h"
 
-@interface FMDTKeyValueObject : FMDTObject
-
-@property (nonatomic, strong) NSString *m_key;
-@property (nonatomic, strong) NSDictionary *m_value;
-
-@end
-
 @implementation FMDTKeyValueObject
 
 + (NSString *)primaryKeyFieldName {
@@ -36,7 +29,7 @@
     static id _staticObject = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _staticObject = [FMDTKeyValueStorage new];
+        _staticObject = [self new];
     });
     return _staticObject;
 }

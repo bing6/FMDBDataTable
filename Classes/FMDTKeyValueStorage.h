@@ -11,8 +11,17 @@
 
 #define STORE [FMDTKeyValueStorage shared]
 
+@interface FMDTKeyValueObject : FMDTObject
+
+@property (nonatomic, strong) NSString *m_key;
+@property (nonatomic, strong) NSDictionary *m_value;
+
+@end
+
 @interface FMDTKeyValueStorage : FMDTManager
 
+
+@property (nonatomic, strong, readonly) FMDTContext *kv;
 /**
  添加键值存储
 
