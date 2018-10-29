@@ -114,7 +114,8 @@
     NSString * findStr = [dbts substringWithRange:NSMakeRange(s.location, e.location - s.location)];
     for (FMDTSchemaField *entry in ldts.fields) {
 //        if (![findStr containsString:entry.name]) {
-        if ([findStr rangeOfString:[NSString stringWithFormat:@"`%@`", entry.name]].length == 0) {
+        if (!([findStr rangeOfString:[NSString stringWithFormat:@"`%@`", entry.name]].length > 0 ||
+              [findStr rangeOfString:[NSString stringWithFormat:@"[%@]", entry.name]].length > 0)) {
             [text appendFormat:@"alter table [%@] add column [%@] %@;", ldts.tableName, entry.name, entry.type];
         }
     }
