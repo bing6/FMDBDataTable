@@ -9,24 +9,13 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods.xcscheme</key>
+		<key>Pods-FMDataTable.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>1B9FA7A5421F72B261CD8F8DC49B18F2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>9F12FB4A63E20F601CFB2E64A65B57C1</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-	</dict>
+	<dict/>
 </dict>
 </plist>
