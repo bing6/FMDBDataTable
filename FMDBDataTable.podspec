@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "FMDBDataTable"
-  s.version      = "2.2.3"
+  s.version      = "2.2.4"
   s.summary      = "基于FMDB的一个ORM解决方案"
 
   s.description  = <<-DESC
